@@ -9,6 +9,8 @@ export default {
   fetchStudentsByAge: `${baseURL}studentsbyage`,
   fetchAgeByCountry: `${baseURL}country/age`,
   fetchAgeByFaculty: `${baseURL}faculty/age`,
+  fetchAgeByYear: `${baseURL}year/age`,
+  
   fetchAgeByFacultyAndCountry: `${baseURL}facultyandcountry/age`,
   fetchFaculties: `${baseURL}faculties`,
   
