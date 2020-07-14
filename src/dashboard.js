@@ -321,6 +321,31 @@ const Dashboard = () => {
        setStudentsByAge(array)
     }
 
+    const fetchAgeByYear = async() => {
+      const body = {
+        year
+      }
+      console.log(body)
+      const resp = await fetch("POST", endpoints.fetchAgeByYear, body);
+      console.log(resp)
+      var array = []
+      
+      resp.map(student => {
+        var a = {"group" : "10-20","value": student.age10to20}
+        array.push(a)
+        var b = {"group" : "20-30","value": student.age20to30}
+        array.push(b)
+        var c = {"group" : "30-40","value": student.age30to40}
+        array.push(c)
+        var d = {"group" : "40-50","value": student.age40to50}
+        array.push(d)
+        var e = {"group" : "50-60","value": student.age50to60}
+        array.push(e)        
+      })        
+      console.log(array)
+       setStudentsByAge(array)
+    }
+
   setYears(["2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"])
   console.log(years)
 
@@ -330,20 +355,20 @@ const Dashboard = () => {
 
 
     if (countries.length < 1) fetchCountries();
-    if(country) fetchGendersByCountry();
-    if (country && faculty == false) fetchAgeByCountry();
+    if(country && year == false && faculty == false) fetchGendersByCountry();
+    if (country && faculty == false && year== false) fetchAgeByCountry();
     fetchStudentsByYear();
     if(faculties.length<1) fetchFaculties();
-    if(faculty && country == false) fetchAgeByFaculty();
-    if(faculty && country) fetchAgeByFacultyAndCountry();
-    
+    if(faculty && country == false && year==false) fetchAgeByFaculty();
+    if(faculty && country && year==false) fetchAgeByFacultyAndCountry();
+    if(year && country==false && faculty == false ) fetchAgeByYear();
     
     // fetchGradUnderGrad();
     fetchGrad();
     fetchJsonCountries();
     fetchUnderGrad();
     if (country == false) fetchStudentsByAge();
-  }, [countries, country,faculties,faculty]);
+  }, [countries, country,faculties,faculty,year]);
 
   
 
