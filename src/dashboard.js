@@ -80,10 +80,13 @@ const Dashboard = () => {
   const classes = useStyles();
   const [country, setCountry] = useState("");
   const [faculty, setFaculty] = useState("");
+  const [year,setYear] = useState("");
   const [countries, setCountries] = useState([]);
   const [faculties, setFaculties] = useState([]);
   const [years, setYears] = useState([]);
+  const [levels, setLevels] = useState([]);
   const [genders, setGenders] = useState(defaultGender);
+  const [genderies,setGenderies] = useState([])
   const [StudentsByYearArray, setStudentsByYears] = useState([]);
   const [GradUnderGradArray, setGradUnderGrad] = useState([]);
   const [data1, setdata1] = useState([])
@@ -321,6 +324,9 @@ const Dashboard = () => {
   setYears(["2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"])
   console.log(years)
 
+  setGenderies(["Male","Female"])
+
+  setLevels(["Graduate","UnderGraduate"])
 
 
     if (countries.length < 1) fetchCountries();
@@ -330,6 +336,7 @@ const Dashboard = () => {
     if(faculties.length<1) fetchFaculties();
     if(faculty && country == false) fetchAgeByFaculty();
     if(faculty && country) fetchAgeByFacultyAndCountry();
+    
     
     // fetchGradUnderGrad();
     fetchGrad();
@@ -350,6 +357,11 @@ const Dashboard = () => {
     setFaculty(fac)
     // console.log(faculty)
   }
+  const handleYearsChange = async(event, year) =>{
+    console.log(year)
+    setYear(year)
+  }
+  
   const handleChangeData = (d,color) => {
     // setData(generateData(null, Math.floor(Math.random() * 10 + 1)));
     setGradData(d)
@@ -418,7 +430,33 @@ const Dashboard = () => {
                 // {console.log(params)}
                 <TextField {...params} label="Year" variant="outlined" />
               )}
-              // onChange={handleCountryChange}
+              onChange={handleYearsChange}
+            />                  
+          </ListItem>
+          <ListItem>
+          <Autocomplete
+              id="gender-selector"
+              options={genderies}
+              getOptionLabel={option => option}
+              style={{ width: 300 }}
+              renderInput={params => (
+                // {console.log(params)}
+                <TextField {...params} label="Gender" variant="outlined" />
+              )}
+              // onChange={handleYearsChange}
+            />                  
+          </ListItem>
+          <ListItem>
+          <Autocomplete
+              id="level-selector"
+              options={levels}
+              getOptionLabel={option => option}
+              style={{ width: 300 }}
+              renderInput={params => (
+                // {console.log(params)}
+                <TextField {...params} label="Level" variant="outlined" />
+              )}
+              // onChange={handleYearsChange}
             />                  
           </ListItem>
           </List>
