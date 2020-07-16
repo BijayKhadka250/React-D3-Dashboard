@@ -1,4 +1,4 @@
-const baseURL = "http://140.184.230.103:5000/";
+const baseURL = "http://140.184.230.103:4545/";
 export default {
   fetchCountries: `${baseURL}country`,
   fetchStudentsByYear: `${baseURL}students`,
@@ -10,10 +10,13 @@ export default {
   fetchAgeByCountry: `${baseURL}country/age`,
   fetchAgeByFaculty: `${baseURL}faculty/age`,
   fetchAgeByYear: `${baseURL}year/age`,
+  fetchAgeByYearAndFaculty: `${baseURL}yearandfaculty/age`,
+  fetchAgeByYearAndCountryAndFaculty: `${baseURL}yearandcountryandfaculty/age`,
   
   fetchAgeByFacultyAndCountry: `${baseURL}facultyandcountry/age`,
   fetchFaculties: `${baseURL}faculties`,
-  
+  fetchMultipleCountry: `${baseURL}multiplecountry`,
+  fetchAges: `${baseURL}ages`,
 
   fetchApi: `${baseURL}api`  
 };
