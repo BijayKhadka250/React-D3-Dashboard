@@ -27,6 +27,9 @@ import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import { ListItem } from "@material-ui/core";
+import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
 const drawerWidth = 350;
 const useStyles = makeStyles(theme => ({
@@ -78,9 +81,11 @@ const defaultGender = [
 
 const Dashboard = () => {
   const classes = useStyles();
-  const [country, setCountry] = useState("");
-  const [faculty, setFaculty] = useState("");
-  const [year,setYear] = useState("");
+  const [country, setCountry] = useState('any');
+  const [faculty, setFaculty] = useState('any');
+  const [year,setYear] = useState('any');
+  const [gender,setGender] = useState('any');
+  const [level,setLevel] = useState('any');
   const [countries, setCountries] = useState([]);
   const [faculties, setFaculties] = useState([]);
   const [years, setYears] = useState([]);
@@ -91,6 +96,7 @@ const Dashboard = () => {
   const [GradUnderGradArray, setGradUnderGrad] = useState([]);
   const [data1, setdata1] = useState([])
   const [data2, setdata2] = useState([])
+  const [multipleCountry, setMultipleCountry] = useState("")
   
   const [JsonCountries, setJsonCountries] = useState([]);
   const[GradData,setGradData] = useState(null)
@@ -346,29 +352,141 @@ const Dashboard = () => {
        setStudentsByAge(array)
     }
 
+    const fetchAgeByYearAndFaculty = async() => {
+      const body = {
+        year,
+        faculty
+      }
+      console.log(body)
+      const resp = await fetch("POST", endpoints.fetchAgeByYearAndFaculty, body);
+      console.log(resp)
+      var array = []
+      
+      resp.map(student => {
+        var a = {"group" : "10-20","value": student.age10to20}
+        array.push(a)
+        var b = {"group" : "20-30","value": student.age20to30}
+        array.push(b)
+        var c = {"group" : "30-40","value": student.age30to40}
+        array.push(c)
+        var d = {"group" : "40-50","value": student.age40to50}
+        array.push(d)
+        var e = {"group" : "50-60","value": student.age50to60}
+        array.push(e)        
+      })        
+      console.log(array)
+       setStudentsByAge(array)
+    }
+
+    const fetchAgeByYearAndCountry = async() => {
+      const body = {
+        year,
+        country
+      }
+      console.log(body)
+      const resp = await fetch("POST", endpoints.fetchAgeByYearAndCountry, body);
+      console.log(resp)
+      var array = []
+      
+      resp.map(student => {
+        var a = {"group" : "10-20","value": student.age10to20}
+        array.push(a)
+        var b = {"group" : "20-30","value": student.age20to30}
+        array.push(b)
+        var c = {"group" : "30-40","value": student.age30to40}
+        array.push(c)
+        var d = {"group" : "40-50","value": student.age40to50}
+        array.push(d)
+        var e = {"group" : "50-60","value": student.age50to60}
+        array.push(e)        
+      })        
+      console.log(array)
+       setStudentsByAge(array)
+    }
+
+    
+    const fetchAgeBYYearFacultyAndCountry = async() => {
+      const body = {
+        year,
+        country
+      }
+      console.log(body)
+      const resp = await fetch("POST", endpoints.fetchAgeByYearAndCountryAndFaculty, body);
+      console.log(resp)
+      var array = []
+      
+      resp.map(student => {
+        var a = {"group" : "10-20","value": student.age10to20}
+        array.push(a)
+        var b = {"group" : "20-30","value": student.age20to30}
+        array.push(b)
+        var c = {"group" : "30-40","value": student.age30to40}
+        array.push(c)
+        var d = {"group" : "40-50","value": student.age40to50}
+        array.push(d)
+        var e = {"group" : "50-60","value": student.age50to60}
+        array.push(e)        
+      })        
+      console.log(array)
+       setStudentsByAge(array)
+    }
+    const fetchAges = async() => {
+      const body = {
+        gender,
+        country,
+        level,
+        year,
+        faculty
+        
+      }
+      console.log(body)
+      const resp = await fetch("POST", endpoints.fetchAges, body);
+      console.log(resp)
+      var array = []
+      
+      resp.map(student => {
+        var a = {"group" : "10-20","value": student.age10to20}
+        array.push(a)
+        var b = {"group" : "20-30","value": student.age20to30}
+        array.push(b)
+        var c = {"group" : "30-40","value": student.age30to40}
+        array.push(c)
+        var d = {"group" : "40-50","value": student.age40to50}
+        array.push(d)
+        var e = {"group" : "50-60","value": student.age50to60}
+        array.push(e)        
+      })        
+      console.log(array)
+       setStudentsByAge(array)
+    }
+
   setYears(["2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"])
   console.log(years)
 
-  setGenderies(["Male","Female"])
+  setGenderies(["M","F"])
 
   setLevels(["Graduate","UnderGraduate"])
 
 
     if (countries.length < 1) fetchCountries();
-    if(country && year == false && faculty == false) fetchGendersByCountry();
-    if (country && faculty == false && year== false) fetchAgeByCountry();
+    // if(country && year == false && faculty == false) fetchGendersByCountry();
+    // if (country && faculty == false && year== false) fetchAgeByCountry();
     fetchStudentsByYear();
     if(faculties.length<1) fetchFaculties();
-    if(faculty && country == false && year==false) fetchAgeByFaculty();
-    if(faculty && country && year==false) fetchAgeByFacultyAndCountry();
-    if(year && country==false && faculty == false ) fetchAgeByYear();
+    // if(faculty && country == false && year==false) fetchAgeByFaculty();
+    // if(faculty && country && year==false) fetchAgeByFacultyAndCountry();
+    // if(year && country==false && faculty == false ) fetchAgeByYear();
+    // if(year && faculty && country== false) fetchAgeByYearAndFaculty();
+    // if(year && country && faculty== false) fetchAgeByYearAndCountry();
+    // if(year && faculty && country) fetchAgeBYYearFacultyAndCountry();
     
     // fetchGradUnderGrad();
     fetchGrad();
     fetchJsonCountries();
     fetchUnderGrad();
-    if (country == false) fetchStudentsByAge();
-  }, [countries, country,faculties,faculty,year]);
+    // if (country == false && year==false && faculty == false) fetchStudentsByAge();
+      fetchAges();
+  }, [countries, country,faculties,faculty,year,multipleCountry,level,gender]);
 
   
 
@@ -386,6 +504,14 @@ const Dashboard = () => {
     console.log(year)
     setYear(year)
   }
+
+  const handleGenderChange = async(event,gender) => {
+    setGender(gender)
+  }
+  
+  const handleLevelChange = async(event,level) => {
+      setLevel(level)
+  }
   
   const handleChangeData = (d,color) => {
     // setData(generateData(null, Math.floor(Math.random() * 10 + 1)));
@@ -393,6 +519,21 @@ const Dashboard = () => {
     setColor(color)
    
   };
+  
+  const Arr = []
+  const HandleCheckBoxChange = async(event, a) => {
+    console.log(a)
+    Arr.push(a)
+    var tokens = Arr.join(',');
+    console.log(tokens)
+    console.log(Arr)
+    setMultipleCountry(tokens)
+    console.log(multipleCountry)
+
+  }
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
   return (
     <div className={classes.root}>
@@ -416,74 +557,140 @@ const Dashboard = () => {
        <div className={classes.drawerContainer} >
           <Toolbar />
           <Typography variant="h6" align="center" noWrap>
-            Filter
+            Filters
           </Typography>
           <List component="nav" aria-label="main mailbox folders">
           <ListItem>
           <Autocomplete
-              id="country-selector"
+              multiple
+              id="checkboxes-country-selector"
               options={countries}
+              disableCloseOnSelect
               getOptionLabel={option => option}
+              
+              renderOption={(option, { selected }) => (
+                <React.Fragment>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </React.Fragment>
+              )}
               style={{ width: 300 }}
               renderInput={params => (
                 // {console.log(params)}
-                <TextField {...params} label="Country" variant="outlined" />
+                <TextField {...params} label="Country" placeholder="Favorites" variant="outlined" />
               )}
               onChange={handleCountryChange}
             />                  
           </ListItem>
           <ListItem>
           <Autocomplete
+              multiple
               id="faculties-selector"
+              
               options={faculties}
+              disableCloseOnSelect
               getOptionLabel={option => option}
+              renderOption={(option, { selected }) => (
+                <React.Fragment>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    // style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </React.Fragment>
+              )}
               style={{ width: 300 }}
               renderInput={params => (
                 // {console.log(params)}
-                <TextField {...params} label="Faculty" variant="outlined" />
+                <TextField {...params} label="Faculty" variant="outlined" placeholder="Favorites" />
               )}
               onChange={handleFacultiesChange}
             />
           </ListItem>
           <ListItem>
           <Autocomplete
+              multiple
               id="year-selector"
               options={years}
               getOptionLabel={option => option}
+              renderOption={(option, { selected }) => (
+                <React.Fragment>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    // style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </React.Fragment>
+              )}
               style={{ width: 300 }}
               renderInput={params => (
                 // {console.log(params)}
-                <TextField {...params} label="Year" variant="outlined" />
+                <TextField {...params} label="Year" variant="outlined" placeholder="Favorites" />
               )}
               onChange={handleYearsChange}
             />                  
           </ListItem>
           <ListItem>
           <Autocomplete
+              multiple
               id="gender-selector"
               options={genderies}
               getOptionLabel={option => option}
+              renderOption={(option, { selected }) => (
+                <React.Fragment>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    // style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </React.Fragment>
+              )}
               style={{ width: 300 }}
               renderInput={params => (
                 // {console.log(params)}
-                <TextField {...params} label="Gender" variant="outlined" />
+                <TextField {...params} label="Gender" variant="outlined" placeholder="Favorites"/>
               )}
-              // onChange={handleYearsChange}
+              onChange={handleGenderChange}
             />                  
           </ListItem>
           <ListItem>
           <Autocomplete
+              multiple
               id="level-selector"
               options={levels}
+              disableCloseOnSelect
               getOptionLabel={option => option}
+              renderOption={(option, { selected }) => (
+                <React.Fragment>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    // style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option}
+                </React.Fragment>
+              )}
               style={{ width: 300 }}
               renderInput={params => (
                 // {console.log(params)}
-                <TextField {...params} label="Level" variant="outlined" />
+                <TextField {...params} label="Level" variant="outlined" placeholder="Favorites" />
               )}
-              // onChange={handleYearsChange}
+              onChange={handleLevelChange}
             />                  
           </ListItem>
+          
           </List>
       </div>
        
@@ -499,6 +706,9 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper}>
+          <Typography variant="h6" align="center" noWrap>
+            Age-group vs Students BarGraph
+          </Typography>
             <AgeBarGraphs data = {studentsByAge}/> 
           </Paper>
         </Grid>
