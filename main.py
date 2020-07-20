@@ -2,13 +2,17 @@ from flask import Flask, render_template, jsonify
 from flask_mysqldb import MySQL
 from flask import request
 from flask_cors import CORS
+from environs import Env
+
+env = Env()
+env.read_env()
 
 app = Flask(__name__)
-app.config['MYSQL_USER'] = ''
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_HOST'] = ''
-app.config['MYSQL_DB'] = ''
-app.config['MYSQL_CURSORCLASS'] = ''
+app.config['MYSQL_USER'] = env.str("MYSQL_USER")
+app.config['MYSQL_PASSWORD'] = env.str("MYSQL_PASSWORD")
+app.config['MYSQL_HOST'] = env.str("MYSQL_HOST")
+app.config['MYSQL_DB'] = env.str("MYSQL_DB")
+app.config['MYSQL_CURSORCLASS'] = env.str("MYSQL_CURSORCLASS")
 CORS(app)
 mysql = MySQL(app)
 
@@ -29,11 +33,11 @@ def fetch_by_multiplecountry():
               {0} FIND_IN_SET(citizenship, %s) \
               GROUP BY gender"
     country = request.form.get('country')
-    print(country)  
+    print(country)
     countries = (request.form.get('country'),)
     print(countries)
-    select = select.format('NOT' if country=='any' else '')	
-    
+    select = select.format('NOT' if country=='any' else '')
+
     cur.execute(select, (countries))
     response = cur.fetchall()
     return jsonify(response)
@@ -69,7 +73,7 @@ def get_genders():
               AND FIND_IN_SET(SUBSTR(term,1,4), %s) \
               AND FIND_IN_SET(level, %s) \
               GROUP BY gender"
-#    params = (request.form.get('gender'),request.form.get('faculty'),request.form.get('country'),request.form.get('year'),request.form.get('level'),)	
+#    params = (request.form.get('gender'),request.form.get('faculty'),request.form.get('country'),request.form.get('year'),request.form.get('level'),)
     countries = request.form.get('country')
     print(countries)
     genders = request.form.get('gender')
@@ -111,7 +115,7 @@ def fetch_by_ages():
     year = request.form.get('year')
     faculty = request.form.get('faculty')
 
-    print(country)  
+    print(country)
     print(gender)
     print(level)
     print(year)
@@ -128,8 +132,8 @@ def fetch_by_ages():
                            'NOT' if country=='any' else '',\
                            'NOT' if year=='any' else '',\
                            'NOT' if level=='any' else '')
-	
-    
+
+
     cur.execute(select, (genders,faculties,countries,years,levels))
     response = cur.fetchall()
     return jsonify(response)
