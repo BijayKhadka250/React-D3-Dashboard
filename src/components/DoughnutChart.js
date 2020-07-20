@@ -16,6 +16,7 @@ const animatePie = (props) => {
     percent,
     value,
   } = props;
+
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
   const sx = cx + (outerRadius + 10) * cos;
@@ -29,7 +30,7 @@ const animatePie = (props) => {
   return (
     <g>
       <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-        {payload.label}
+        {payload.gender}
       </text>
       <Sector
         cx={cx}
@@ -91,20 +92,20 @@ export default class DoughnutChart extends PureComponent {
   expandedForm = (data) => {
     let expandedDataArray = [...data];
     expandedDataArray = expandedDataArray.map((item) => {
-      if (item.label === "F") {
+      if (item.gender === "F") {
         return {
-          label: "Female",
-          value: item.value,
+          gender: "Female",
+          count: item.count,
         };
-      } else if (item.label === "M") {
+      } else if (item.gender === "M") {
         return {
-          label: "Male",
-          value: item.value,
+          gender: "Male",
+          count: item.count,
         };
-      } else if (item.label === "N") {
+      } else if (item.gender === "N") {
         return {
-          label: "Non-Binary",
-          value: item.value,
+          gender: "Non-Binary",
+          count: item.count,
         };
       }
       return item;
@@ -117,9 +118,14 @@ export default class DoughnutChart extends PureComponent {
     data =
       data.length > 0
         ? this.expandedForm(data)
-        : [{ label: "Student", value: 100 }];
+        : [{ gender: "Student", count: 100 }];
+
     return (
-      <PieChart width={400} height={400}>
+      <PieChart
+        width={500}
+        height={400}
+        margin={{ left: 50, top: 5, bottom: 5, right: 5 }}
+      >
         <Pie
           activeIndex={this.state.activeIndex}
           activeShape={animatePie}
@@ -129,7 +135,7 @@ export default class DoughnutChart extends PureComponent {
           innerRadius={60}
           outerRadius={80}
           fill="#8884d8"
-          dataKey="value"
+          dataKey="count"
           onMouseEnter={this.onPieEnter}
         />
       </PieChart>

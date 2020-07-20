@@ -1,46 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import Card from "@material-ui/core/Card";
-import fetch from "./utils/fetch";
-import endpoints from "./utils/endpoints";
-import Doughnut from "./components/doughnut";
-import LineChart from "./components/LineChart"
+import Modal from "@material-ui/core/Modal";
 
-import Stack from './components/Stack'
-import GeoMap from './components/GeoMap'
-import data from './components/GeoChart.world.geo.json'
-// import Worldmap from './components/WorldMap'
-import Switch from './components/Switch'
-import { color } from "d3";
-import './dashboard.css'
-import AgeBarGraphs from './components/AgeBarGraph'
-import Drawer from '@material-ui/core/Drawer'
-import Divider from '@material-ui/core/Divider'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper';
-import List from '@material-ui/core/List';
-import { ListItem } from "@material-ui/core";
-import Checkbox from '@material-ui/core/Checkbox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import GeoMap from "./components/GeoMap";
+import data from "./components/GeoChart.world.geo.json";
+import DoughnutChart from "./components/DoughnutChart";
+import BarGraphForAge from "./components/BarGraphForAge";
+import StudentEnrolledLineChart from "./components/StudentEnrolledLineChart";
+import "react-circular-progressbar/dist/styles.css";
 
-const drawerWidth = 350;
-const useStyles = makeStyles(theme => ({
+import FilterBar from "./filters";
+
+import {
+  fetchStudentsByYear,
+  fetchCountries,
+  fetchFaculties,
+  fetchJsonCountries,
+  fetchAge,
+  fetchGenders,
+} from "./utils/apiStore";
+
+const drawerWidth = 280;
+// const TOTAL_STUDENTS = 159950;
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
   },
   appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  gridMain: {
-    padding: "16px"
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
   },
   drawer: {
     width: drawerWidth,
@@ -49,491 +46,143 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: drawerWidth,
   },
-  drawerContainer: {
-    overflow: 'auto',
+  pieCard: {
+    maxWidth: 500,
   },
+  lineChart: {
+    maxWidth: 600,
+    marginLeft: 35,
+  },
+  meter: {
+    width: 300,
+  },
+  ageBar: {
+    maxWidth: 500,
+    marginLeft: 18,
+  },
+  halfPie: {
+    maxWidth: 400,
+  },
+  ptftPie: {
+    maxWidth: 500,
+    marginLeft: 35,
+  },
+  facultySpikyBar: {
+    maxWidth: 415,
+  },
+  gradStat: {
+    maxWidth: 500,
+    marginLeft: 20,
+  },
+  map: {
+    marginBottom: 20,
+  },
+  cgpaGraph: {
+    marginBottom: 20,
+  },
+  toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
   },
-  root1: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-  toolbar: theme.mixins.toolbar
-  
 }));
 
-const defaultGender = [
-  {
-    value: 0,
-    label: ""
-  }
-];
-
-
-
-
-
-const Dashboard = () => {
+export default function DashboardMain(props) {
   const classes = useStyles();
-  const [country, setCountry] = useState('any');
-  const [faculty, setFaculty] = useState('any');
-  const [year,setYear] = useState('any');
-  const [gender,setGender] = useState('any');
-  const [level,setLevel] = useState('any');
+
+  const [countryFilter, setCountryFilter] = useState([]);
+  const [facultyFilter, setFacultyFilter] = useState([]);
+  const [genderFilter, setGenderFilter] = useState([]);
+  const [yearFilter, setYearFilter] = useState([]);
+  const [gradStatusFilter, setGradStatusFilter] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [studentByYearData, setStudentByYearData] = useState([]);
   const [faculties, setFaculties] = useState([]);
-  const [years, setYears] = useState([]);
-  const [levels, setLevels] = useState([]);
-  const [genders, setGenders] = useState(defaultGender);
-  const [genderies,setGenderies] = useState([])
-  const [StudentsByYearArray, setStudentsByYears] = useState([]);
-  const [GradUnderGradArray, setGradUnderGrad] = useState([]);
-  const [data1, setdata1] = useState([])
-  const [data2, setdata2] = useState([])
-  const [multipleCountry, setMultipleCountry] = useState("")
-  
+  const [gendersData, setGendersData] = useState([]);
+  const [ageData, setAgeData] = useState([]);
   const [JsonCountries, setJsonCountries] = useState([]);
-  const[GradData,setGradData] = useState(null)
-  const[color,setColor] = useState("")
-  const[studentsByAge,setStudentsByAge] = useState([])
+  const [openModal, toggleModal] = useState(false);
+  const [currentVisualization, setCurrentVisualization] = useState("age");
+  
 
-  
-  
+  const visualizations = {
+    mapGraph: (
+      <Card className={classes.map}>
+        <GeoMap data={data} api={JsonCountries} />
+      </Card>
+    ),
+    genderGraph: (
+      <Card className={classes.pieCard}>
+        <DoughnutChart data={gendersData} />
+      </Card>
+    ),
+    ageGraph: (
+      <Card className={classes.ageBar}>
+        <BarGraphForAge data={ageData} />
+      </Card>
+    ),
+    
+    lineGraph: (
+      <Card className={classes.lineChart}>
+        <StudentEnrolledLineChart data={studentByYearData} />
+      </Card>
+    ),
+    
+  };
+
+  const FilterBarProps = {
+    setGenderFilter,
+    setCountryFilter,
+    countries,
+    faculties,
+    setFacultyFilter,
+    setYearFilter,
+    setGradStatusFilter,
+  };
+
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const resp = await fetch("GET", endpoints.fetchCountries);
-        // console.log(resp);
-        const countryArray = resp.map(country => country.citizenship);
-        console.log(countryArray)
-        setCountries(countryArray);
-        // console.log(countries);
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    fetchStudentsByYear(setStudentByYearData);
+    fetchCountries(setCountries);
+    fetchFaculties(setFaculties);
+    fetchJsonCountries(setJsonCountries);
+  }, []);
 
-    const fetchFaculties = async() => {
-      try {
-        const resp = await fetch("GET", endpoints.fetchFaculties);
-        // console.log(resp);
-        const facultiesArray = resp.map(faculties => faculties.faculty);
-        setFaculties(facultiesArray);
-       
-      } catch (e) {
-        console.log(e);
-      }
-
-    }
-
-    
-
-
-    
-
-    const fetchJsonCountries = async() => {
-      try {
-        const JsonCountry = await fetch("GET", endpoints.fetchApi);
-        // console.log(JsonCountry);
-        // console.log(JsonCountry.features);
-
-        //const countryArray = resp.map(country => country.citizenship);
-        setJsonCountries(JsonCountry);
-        // console.log(JsonCountries);
-
-
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchGrad = async() => {
-      try {
-        const Grad = await fetch("GET", endpoints.fetchGrad);
-        // console.log(Grad);
-        // data1 = Grad
-        setdata1(Grad)
-        
-        // console.log(JsonCountry.features);
-
-        //const countryArray = resp.map(country => country.citizenship);
-        // setJsonCountries(JsonCountry);
-        // console.log(JsonCountries);
-        
-        // setGradData(Grad)
-
-
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchUnderGrad = async() => {
-      try {
-        const UnderGrad = await fetch("GET", endpoints.fetchUnderGrad);
-        // console.log(UnderGrad);
-        // console.log(JsonCountry.features);
-
-        //const countryArray = resp.map(country => country.citizenship);
-        // setJsonCountries(JsonCountry);
-        // console.log(JsonCountries);
-        setdata2(UnderGrad)
-
-
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchStudentsByYear = async() => {
-      try {
-        const StudentsByYear = await fetch("GET", endpoints.fetchStudentsByYear);
-        // console.log(StudentsByYear);
-        const students = StudentsByYear.map(student => ({
-          Enroll_Year: +student.Enroll_Year,
-          total: student.total
-        }));
-        // console.log(students)
-        setStudentsByYears(students)
-        // console.log(StudentsByYearArray)
-        
-      }
-      catch (e) {
-        console.log(e);
-      }
-    }
-
-      
-     
-    
-    const fetchGendersByCountry = async () => {
-      const body = {
-        country
-      };
-      console.log(body)
-      const resp = await fetch("POST", endpoints.fetchGenderByCountry, body);
-      console.log(resp)
-      const genders = resp.map(gender => ({
-        value: gender.count,
-        label: gender.gender
-      }));
-      // console.log(genders)
-      setGenders(genders);
-      // console.log(genders);
-      // console.log(countries);
-    };
-    const fetchStudentsByAge = async() => {
-      const resp = await fetch("GET",endpoints.fetchStudentsByAge)
-      var array = []
-      // console.log(resp)
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      // console.log(array)
-       setStudentsByAge(array)
-    }
-
-    const fetchAgeByCountry = async() => {
-      const body = {
-        country
-      };
-      const resp = await fetch("POST", endpoints.fetchAgeByCountry, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-
-    }
-    const fetchAgeByFaculty = async() => {
-      const body = {
-        faculty
-      };
-      console.log(body)
-      
-      const resp = await fetch("POST", endpoints.fetchAgeByFaculty, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-      // setStudentsByAge(resp)
-
-    }
-
-    const fetchAgeByFacultyAndCountry = async() => {
-      const body = {
-        faculty,
-        country
-      };
-      console.log(body)
-      
-      const resp = await fetch("POST", endpoints.fetchAgeByFacultyAndCountry, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-    }
-
-    const fetchAgeByYear = async() => {
-      const body = {
-        year
-      }
-      console.log(body)
-      const resp = await fetch("POST", endpoints.fetchAgeByYear, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-    }
-
-    const fetchAgeByYearAndFaculty = async() => {
-      const body = {
-        year,
-        faculty
-      }
-      console.log(body)
-      const resp = await fetch("POST", endpoints.fetchAgeByYearAndFaculty, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-    }
-
-    const fetchAgeByYearAndCountry = async() => {
-      const body = {
-        year,
-        country
-      }
-      console.log(body)
-      const resp = await fetch("POST", endpoints.fetchAgeByYearAndCountry, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-    }
-
-    
-    const fetchAgeBYYearFacultyAndCountry = async() => {
-      const body = {
-        year,
-        country
-      }
-      console.log(body)
-      const resp = await fetch("POST", endpoints.fetchAgeByYearAndCountryAndFaculty, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-    }
-    const fetchAges = async() => {
-      const body = {
-        gender,
-        country,
-        level,
-        year,
-        faculty
-        
-      }
-      console.log(body)
-      const resp = await fetch("POST", endpoints.fetchAges, body);
-      console.log(resp)
-      var array = []
-      
-      resp.map(student => {
-        var a = {"group" : "10-20","value": student.age10to20}
-        array.push(a)
-        var b = {"group" : "20-30","value": student.age20to30}
-        array.push(b)
-        var c = {"group" : "30-40","value": student.age30to40}
-        array.push(c)
-        var d = {"group" : "40-50","value": student.age40to50}
-        array.push(d)
-        var e = {"group" : "50-60","value": student.age50to60}
-        array.push(e)        
-      })        
-      console.log(array)
-       setStudentsByAge(array)
-    }
-
-  setYears(["2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"])
-  console.log(years)
-
-  setGenderies(["M","F"])
-
-  setLevels(["Graduate","UnderGraduate"])
-
-
-    if (countries.length < 1) fetchCountries();
-    // if(country && year == false && faculty == false) fetchGendersByCountry();
-    // if (country && faculty == false && year== false) fetchAgeByCountry();
-    fetchStudentsByYear();
-    if(faculties.length<1) fetchFaculties();
-    // if(faculty && country == false && year==false) fetchAgeByFaculty();
-    // if(faculty && country && year==false) fetchAgeByFacultyAndCountry();
-    // if(year && country==false && faculty == false ) fetchAgeByYear();
-    // if(year && faculty && country== false) fetchAgeByYearAndFaculty();
-    // if(year && country && faculty== false) fetchAgeByYearAndCountry();
-    // if(year && faculty && country) fetchAgeBYYearFacultyAndCountry();
-    
-    // fetchGradUnderGrad();
-    fetchGrad();
-    fetchJsonCountries();
-    fetchUnderGrad();
-    // if (country == false && year==false && faculty == false) fetchStudentsByAge();
-      fetchAges();
-  }, [countries, country,faculties,faculty,year,multipleCountry,level,gender]);
+  useEffect(() => {
+    fetchGenders(
+      setGendersData,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
+    fetchAge(
+      setAgeData,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
 
   
+  }, [
+    countryFilter,
+    facultyFilter,
+    genderFilter,
+    yearFilter,
+    gradStatusFilter,
+  ]);
 
-  const handleCountryChange = async (event, country) => {
-    // console.log(country)
-    setCountry(country);
-
+  const handleOpen = (value) => {
+    setCurrentVisualization(value);
+    toggleModal(true);
   };
-  const handleFacultiesChange = async (event, fac) => {
-    console.log(fac)  
-    setFaculty(fac)
-    // console.log(faculty)
-  }
-  const handleYearsChange = async(event, year) =>{
-    console.log(year)
-    setYear(year)
-  }
 
-  const handleGenderChange = async(event,gender) => {
-    setGender(gender)
-  }
-  
-  const handleLevelChange = async(event,level) => {
-      setLevel(level)
-  }
-  
-  const handleChangeData = (d,color) => {
-    // setData(generateData(null, Math.floor(Math.random() * 10 + 1)));
-    setGradData(d)
-    setColor(color)
-   
+  const handleClose = () => {
+    toggleModal(false);
   };
-  
-  const Arr = []
-  const HandleCheckBoxChange = async(event, a) => {
-    console.log(a)
-    Arr.push(a)
-    var tokens = Arr.join(',');
-    console.log(tokens)
-    console.log(Arr)
-    setMultipleCountry(tokens)
-    console.log(multipleCountry)
-
-  }
-
-  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
   return (
     <div className={classes.root}>
@@ -541,313 +190,51 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            SMU Dashboard
+            Saint Mary's University Students Data Dashboard
           </Typography>
         </Toolbar>
       </AppBar>
-    <Drawer
-    className={classes.drawer}
+      <Drawer
+        className={classes.drawer}
         variant="permanent"
         classes={{
           paper: classes.drawerPaper,
         }}
-        // anchor="left"
-    >
-       <Toolbar />
-       <div className={classes.drawerContainer} >
-          <Toolbar />
-          <Typography variant="h6" align="center" noWrap>
-            Filters
-          </Typography>
-          <List component="nav" aria-label="main mailbox folders">
-          <ListItem>
-          <Autocomplete
-              multiple
-              id="checkboxes-country-selector"
-              options={countries}
-              disableCloseOnSelect
-              getOptionLabel={option => option}
-              
-              renderOption={(option, { selected }) => (
-                <React.Fragment>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option}
-                </React.Fragment>
-              )}
-              style={{ width: 300 }}
-              renderInput={params => (
-                // {console.log(params)}
-                <TextField {...params} label="Country" placeholder="Favorites" variant="outlined" />
-              )}
-              onChange={handleCountryChange}
-            />                  
-          </ListItem>
-          <ListItem>
-          <Autocomplete
-              multiple
-              id="faculties-selector"
-              
-              options={faculties}
-              disableCloseOnSelect
-              getOptionLabel={option => option}
-              renderOption={(option, { selected }) => (
-                <React.Fragment>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    // style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option}
-                </React.Fragment>
-              )}
-              style={{ width: 300 }}
-              renderInput={params => (
-                // {console.log(params)}
-                <TextField {...params} label="Faculty" variant="outlined" placeholder="Favorites" />
-              )}
-              onChange={handleFacultiesChange}
-            />
-          </ListItem>
-          <ListItem>
-          <Autocomplete
-              multiple
-              id="year-selector"
-              options={years}
-              getOptionLabel={option => option}
-              renderOption={(option, { selected }) => (
-                <React.Fragment>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    // style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option}
-                </React.Fragment>
-              )}
-              style={{ width: 300 }}
-              renderInput={params => (
-                // {console.log(params)}
-                <TextField {...params} label="Year" variant="outlined" placeholder="Favorites" />
-              )}
-              onChange={handleYearsChange}
-            />                  
-          </ListItem>
-          <ListItem>
-          <Autocomplete
-              multiple
-              id="gender-selector"
-              options={genderies}
-              getOptionLabel={option => option}
-              renderOption={(option, { selected }) => (
-                <React.Fragment>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    // style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option}
-                </React.Fragment>
-              )}
-              style={{ width: 300 }}
-              renderInput={params => (
-                // {console.log(params)}
-                <TextField {...params} label="Gender" variant="outlined" placeholder="Favorites"/>
-              )}
-              onChange={handleGenderChange}
-            />                  
-          </ListItem>
-          <ListItem>
-          <Autocomplete
-              multiple
-              id="level-selector"
-              options={levels}
-              disableCloseOnSelect
-              getOptionLabel={option => option}
-              renderOption={(option, { selected }) => (
-                <React.Fragment>
-                  <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    // style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option}
-                </React.Fragment>
-              )}
-              style={{ width: 300 }}
-              renderInput={params => (
-                // {console.log(params)}
-                <TextField {...params} label="Level" variant="outlined" placeholder="Favorites" />
-              )}
-              onChange={handleLevelChange}
-            />                  
-          </ListItem>
-          
-          </List>
-      </div>
-       
-    </Drawer>
-    <main className={classes.content}>
-      <Toolbar />
-      <div className={classes.root1}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <GeoMap data={data} api={JsonCountries}/>
-          </Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>
-          <Typography variant="h6" align="center" noWrap>
-            Age-group vs Students BarGraph
-          </Typography>
-            <AgeBarGraphs data = {studentsByAge}/> 
-          </Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>
-            <Doughnut data={genders} />
-          </Paper>
-        </Grid>
-      </Grid>
-      </div>
+        anchor="left"
+      >
+        <FilterBar {...FilterBarProps} />
+      </Drawer>
       
-    </main>
+
+      <main className={classes.content}>
+        <Card className={classes.map} onClick={() => handleOpen("mapGraph")}>
+          <GeoMap data={data} api={JsonCountries} />
+        </Card>
+        <div style={{ display: "flex", marginBottom: "25px" }}>
+          <Card
+            className={classes.pieCard}
+            onClick={() => handleOpen("genderGraph")}
+          >
+            <DoughnutChart data={gendersData} />
+          </Card>
+          <Card
+            className={classes.ageBar}
+            onClick={() => handleOpen("ageGraph")}
+          >
+            <BarGraphForAge data={ageData} />
+          </Card>
+        </div>
+        <div style={{ display: "flex", marginBottom: "25px" }}>
+          
+          <Card
+            className={classes.lineChart}
+            onClick={() => handleOpen("lineGraph")}
+          >
+            <StudentEnrolledLineChart data={studentByYearData} />
+          </Card>
+        </div>
+
+      </main>
     </div>
-
-    // <div>
-    // <Box display="flex" p={2}>
-    //   <Card>
-    //     <Grid
-    //       container
-    //       classes={{ root: classes.gridMain }}
-    //       alignItems="center"
-    //       justify="center"
-    //       spacing={4}
-    //     >
-    //       <Grid item>
-    //         <Autocomplete
-    //           id="country-selector"
-    //           options={countries}
-    //           getOptionLabel={option => option}
-    //           style={{ width: 300 }}
-    //           renderInput={params => (
-    //             // {console.log(params)}
-    //             <TextField {...params} label="Country" variant="outlined" />
-    //           )}
-    //           onChange={handleCountryChange}
-    //         />
-    //       </Grid>
-    //       <Grid item>
-    //         <Doughnut data={genders} />
-    //       </Grid>
-    //     </Grid>
-    //     </Card>
-
-    //     <Card className="lineChart">
-    //     <Grid  container
-    //       classes={{ root: classes.gridMain }}
-    //       alignItems="center"
-    //       justify="center"
-    //       spacing={4}>
-    //         <Grid item>
-    //           <LineChart data={StudentsByYearArray}/>
-    //         </Grid>
-        
-
-    //     </Grid>
-
-    //   </Card>    
-     
-    // </Box>
-
-    // <Box display="flex" p={2}>
-    //    <Card>
-    //    <button id="grad" onClick = {() => handleChangeData(data1,"#f0fc03")}>Graduate</button>
-    //    <button id="undergrad" onClick={()=>handleChangeData(data2,"#0bfc03")}>UnderGraduate</button>
-    //     <Grid  container
-    //       classes={{ root: classes.gridMain }}
-    //       alignItems="center"
-    //       justify="center"
-    //       spacing={4}>
-           
-    //         <Grid item>
-                   
-    //            <Switch data={GradData||data1} color={color||"f0fc03"}/>
-    //         </Grid>
-    //     </Grid>
-    //   </Card>
-    //   <Card>
-    //     <Grid container
-    //       classes={{ root: classes.gridMain }}
-    //       alignItems="center"
-    //       justify="center"
-    //       spacing={4}>
-    //       <Grid>
-    //         <GeoMap data={data} api={JsonCountries}/>
-    //       </Grid>
-    //     </Grid>
-    //   </Card>
-    // </Box>
-    // <Box>
-    // <Card>
-    //     <Grid container
-    //       classes={{ root: classes.gridMain }}
-    //       alignItems="center"
-    //       justify="center"
-    //       spacing={4}>
-    //       <Grid>
-    //       <Autocomplete
-    //           id="country-selector-age"
-    //           options={countries}
-    //           getOptionLabel={option => option}
-    //           style={{ width: 300 }}
-    //           renderInput={params => (
-    //             // {console.log(params)}
-    //             <TextField {...params} label="Country" variant="outlined" />
-    //           )}
-    //           onChange={handleCountryChange}
-    //         />
-           
-    //       </Grid>
-    //       <Grid
-    //       >
-    //       <Autocomplete
-    //           id="faculties-selector"
-    //           options={faculties}
-    //           getOptionLabel={option => option}
-    //           style={{ width: 300 }}
-    //           renderInput={params => (
-    //             // {console.log(params)}
-    //             <TextField {...params} label="Faculties" variant="outlined" />
-    //           )}
-    //           onChange={handleFacultiesChange}
-    //         />
-    //       </Grid>
-    //     </Grid>
-    //   </Card>
-    // <Card>
-    //     <Grid container
-    //       classes={{ root: classes.gridMain }}
-    //       alignItems="center"
-    //       justify="center"
-    //       spacing={4}>
-    //       <Grid>
-    //         <AgeBarGraphs data = {studentsByAge}/>
-    //       </Grid>
-    //     </Grid>
-    //   </Card>
-    // </Box>
-    // </div>
   );
-};
-
-export default Dashboard;
+}

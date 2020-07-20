@@ -3,8 +3,8 @@ import React, { useEffect, useRef,useState } from "react";
 import * as d3 from "d3";
 
 const Switch = (props) =>{
-            // console.log(props.data)
-            // console.log(props.color)
+            console.log(props.data)
+            console.log(props.color)
             // const [data,setData] = useState([])
             // setData(data)
           
@@ -48,7 +48,7 @@ const Switch = (props) =>{
               .on("mouseover", function() { tooltip.style("display", null); })
               .on("mouseout", function() { tooltip.style("display", "none"); })
               .on("mousemove", function(d) {
-    // console.log(d);
+    console.log(d);
     var xPosition = d3.mouse(this)[0] - 15;
     var yPosition = d3.mouse(this)[1] - 25;
     tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");

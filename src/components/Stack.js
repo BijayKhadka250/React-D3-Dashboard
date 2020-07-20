@@ -24,7 +24,7 @@ var x = d3.scaleBand()
     .align(0.1);
 
 // set y scale
-var y = d3.scaleLog()
+var y = d3.scaleLinear()
     .rangeRound([height, 0]);
 
 // set the colors
@@ -54,7 +54,7 @@ x.domain(props.data.map(function(d) { return d.citizenship; }));
     .on("mouseover", function() { tooltip.style("display", null); })
     .on("mouseout", function() { tooltip.style("display", "none"); })
   .on("mousemove", function(d) {
-    // console.log(d.data);
+    console.log(d.data);
     var xPosition = d3.mouse(this)[0] - 15;
     var yPosition = d3.mouse(this)[1] - 25;
     tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");

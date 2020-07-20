@@ -7,7 +7,7 @@ const LineChart = (props) => {
   const ref = useRef();
  
 
-    var margin = {left:40,right:20,top:50,bottom:80};
+    var margin = {left:40,right:20,top:50,bottom:50};
     var  width = 750-margin.left-margin.right;
     var  height = 350- margin.top - margin.bottom;
       

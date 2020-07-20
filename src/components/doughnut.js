@@ -4,7 +4,7 @@ import * as d3 from "d3";
 
 const size = {
   width: 300,
-  height: 400,
+  height: 300,
   innerRadius: 75,
   outerRadius: 150
 };
