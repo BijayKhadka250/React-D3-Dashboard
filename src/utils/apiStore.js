@@ -1,9 +1,49 @@
 import fetch from "./fetch";
 import endpoints from "./endpoints";
 
-const fetchStudentsByYear = async (setStudentsByYears) => {
+const fetchStudentsByYear = async (
+  setStudentsByYears,
+  countryFilter,
+  facultyFilter,
+  genderFilter,
+  yearFilter,
+  gradStatusFilter
+) => {
   try {
-    const StudentsByYear = await fetch("GET", endpoints.fetchStudentsByYear);
+    let genderFilterModified = [];
+
+    if (genderFilter.length > 0) {
+      genderFilter.forEach((item) => {
+        if (item === "Male") {
+          genderFilterModified.push("M");
+        } else if (item === "Female") {
+          genderFilterModified.push("F");
+        } else if (item === "Non-Binary") {
+          genderFilterModified.push("N");
+        }
+      });
+    }
+
+    countryFilter = countryFilter.length === 0 ? "any" : countryFilter;
+    facultyFilter = facultyFilter.length === 0 ? "any" : facultyFilter;
+    genderFilterModified =
+      genderFilter.length === 0 ? "any" : genderFilterModified;
+    yearFilter = yearFilter.length === 0 ? "any" : yearFilter;
+    gradStatusFilter = gradStatusFilter.length === 0 ? "any" : gradStatusFilter;
+
+    const body = {
+      country: countryFilter,
+      faculty: facultyFilter,
+      gender: genderFilterModified,
+      year: yearFilter,
+      level: gradStatusFilter,
+    };
+
+    const StudentsByYear = await fetch(
+      "POST",
+      endpoints.fetchStudentsByYear,
+      body
+    );
     const students = StudentsByYear.map((student) => ({
       Enroll_Year: +student.Enroll_Year,
       total: student.total,
