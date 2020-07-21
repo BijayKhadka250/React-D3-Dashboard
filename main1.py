@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 """
 Created on Tue May 12 14:29:31 2020
 
@@ -75,11 +75,30 @@ def fetch_countries():
     return jsonify(response)
 
 
-@app.route('/students')
+@app.route('/students', methods=['POST'])
 def fetch_students_by_Years():
     cur = mysql.connection.cursor()
-    select = "SELECT SUBSTRING(term,1,4) AS Enroll_Year, COUNT(*) AS total FROM demographic GROUP BY  Enroll_Year"
-    cur.execute(select)
+    select = "SELECT SUBSTRING(term,1,4) AS Enroll_Year, COUNT(*) AS total FROM demographic where\
+                {0} FIND_IN_SET(gender, %s) \
+                AND {1} FIND_IN_SET(faculty, %s) \
+                AND {2} FIND_IN_SET(citizenship, %s) \
+                AND {3} FIND_IN_SET(SUBSTR(term,1,4), %s) \
+                AND {4} FIND_IN_SET(level, %s) \
+                GROUP BY  Enroll_Year"
+
+    countries = request.form.get('country')
+    genders = request.form.get('gender')
+    levels = request.form.get('level')
+    years = request.form.get('year')
+    faculties = request.form.get('faculty')
+
+    select = select.format('NOT' if genders == 'any' else '',
+                        'NOT' if faculties == 'any' else '',
+                        'NOT' if countries == 'any' else '',
+                        'NOT' if years == 'any' else '',
+                        'NOT' if levels == 'any' else '')
+    cur.execute(select, (genders, faculties, countries, years, levels))
+        # print(cur._executed)
     response = cur.fetchall()
     return jsonify(response)
 
