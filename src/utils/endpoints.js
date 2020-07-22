@@ -7,4 +7,7 @@ export default {
   // fetchLevel: `${baseURL}level`,
   fetchFaculties: `${baseURL}faculties`,
   fetchApi: `${baseURL}api`,
+  fetchTotalStudents: `${baseURL}totalstudents`,
+  fetchFaculty: `${baseURL}faculty`,
+  fetchLevel: `${baseURL}level`,
 };

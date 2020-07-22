@@ -14,9 +14,14 @@ import Modal from "@material-ui/core/Modal";
 import GeoMap from "./components/GeoMap";
 import data from "./components/GeoChart.world.geo.json";
 import DoughnutChart from "./components/DoughnutChart";
+import Doughnut from "./components/doughnut";
 import BarGraphForAge from "./components/BarGraphForAge";
 import StudentEnrolledLineChart from "./components/StudentEnrolledLineChart";
 import "react-circular-progressbar/dist/styles.css";
+import TotalStudentsMeter from "./components/TotalStudentsMeter";
+import { color } from "d3";
+import FacultyBarGraph from "./components/FacultyBarGraph";
+import PieChartGrad from "./components/PieChartGradUngrad";
 
 import FilterBar from "./filters";
 
@@ -25,12 +30,15 @@ import {
   fetchCountries,
   fetchFaculties,
   fetchJsonCountries,
+  fetchGeoJsonCountries,
   fetchAge,
   fetchGenders,
+  fetchTotalStudents,
+  fetchFaculty,
+  fetchLevel,
 } from "./utils/apiStore";
 
 const drawerWidth = 280;
-// const TOTAL_STUDENTS = 159950;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -86,7 +94,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
   },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
 }));
+
+const defaultGeoJson = {
+  type : "",
+  features : []
+}
 
 export default function DashboardMain(props) {
   const classes = useStyles();
@@ -104,12 +122,16 @@ export default function DashboardMain(props) {
   const [JsonCountries, setJsonCountries] = useState([]);
   const [openModal, toggleModal] = useState(false);
   const [currentVisualization, setCurrentVisualization] = useState("age");
+  const [totalStudentsfiltered, setTotalStudentsfiltered] = useState(0);
+  const [GeoJsonCountries, setGeoJsonCountries] = useState(defaultGeoJson);
+  const [facultyData, setFacultyData] = useState([]);
+  const [levelData, setLevelData] = useState([]);
   
 
   const visualizations = {
     mapGraph: (
       <Card className={classes.map}>
-        <GeoMap data={data} api={JsonCountries} />
+        <GeoMap data={data} api={GeoJsonCountries} />
       </Card>
     ),
     genderGraph: (
@@ -128,8 +150,35 @@ export default function DashboardMain(props) {
         <StudentEnrolledLineChart data={studentByYearData} />
       </Card>
     ),
+    meterGraph: (
+      <Card className={classes.meter}>
+        <TotalStudentsMeter data={totalStudentsfiltered} />
+        <h1 style={{ marginTop: 0 }}>Students</h1>
+      </Card>
+    ),
+    facultyGraph: (
+      <Card className={classes.facultySpikyBar}>
+        <FacultyBarGraph data={facultyData} />
+      </Card>
+    ),
+    gradStatusGraph: (
+      <Card className={classes.gradStat}>
+        <PieChartGrad data={levelData} />
+      </Card>
+    ),
     
   };
+
+//   if (countries.length < 1) fetchCountries();
+//   fetchJsonCountries();
+//   // fetchUnderGrad();
+//   fetchGradAndUnderGrad();
+//   // if (country == false && year==false && faculty == false) fetchStudentsByAge();
+//     fetchAges();
+//     fetchStudentsByFaculties();
+//     fetchGeoJsonCountries();
+// }, [countries, country,faculties,faculty,year,multipleCountry,level,gender]);
+
 
   const FilterBarProps = {
     setGenderFilter,
@@ -145,7 +194,7 @@ export default function DashboardMain(props) {
     // fetchStudentsByYear(setStudentByYearData);
     fetchCountries(setCountries);
     fetchFaculties(setFaculties);
-    fetchJsonCountries(setJsonCountries);
+    fetchGeoJsonCountries(setGeoJsonCountries);
   }, []);
 
   useEffect(() => {
@@ -167,6 +216,30 @@ export default function DashboardMain(props) {
     );
     fetchAge(
       setAgeData,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
+    fetchTotalStudents(
+      setTotalStudentsfiltered,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
+    fetchFaculty(
+      setFacultyData,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
+    fetchLevel(
+      setLevelData,
       countryFilter,
       facultyFilter,
       genderFilter,
@@ -212,35 +285,94 @@ export default function DashboardMain(props) {
       >
         <FilterBar {...FilterBarProps} />
       </Drawer>
+
+      <Modal open={openModal} onClose={handleClose}>
+        <div
+          style={{
+            height: "100vh",
+            width: "100vw",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onClick={() => handleClose()}
+        >
+          {visualizations[currentVisualization]}
+        </div>
+      </Modal>
       
+
 
       <main className={classes.content}>
         <Card className={classes.map} onClick={() => handleOpen("mapGraph")}>
-          <GeoMap data={data} api={JsonCountries} />
+          <GeoMap data={data} api={GeoJsonCountries} />
         </Card>
-        <div style={{ display: "flex", marginBottom: "25px" }}>
-          <Card
-            className={classes.pieCard}
-            onClick={() => handleOpen("genderGraph")}
+
+
+
+    <div style={{ display: "flex", marginBottom: "25px" }}>
+        <Card
+           className={classes.pieCard}
+            onClick={() => handleOpen("genderGraph")}>
+              {/* <Typography variant="h6" align="center" noWrap>
+                   Genderwise Student data 
+              </Typography> */}
+             <DoughnutChart data={gendersData} />
+             <h3 style={{ marginTop: 0 }}>Genderwise Student Data</h3>
+           {/* </paper>  */}
+        </Card>
+
+      <Card
+          className={classes.ageBar}
+          onClick={() => handleOpen("ageGraph")}>
+          {/* <Typography variant="h6" align="center" noWrap>
+             Student count for different age group 
+          </Typography> */}
+          <BarGraphForAge data={ageData} />
+          <h3 style={{ marginTop: 0 }}>Student count for different age group</h3> 
+        {/* </paper>   */}
+     </Card>
+    </div>
+
+      <div style={{ display: "flex", marginBottom: "30px" }}>  
+       <Card
+        className={classes.meter}
+           onClick={() => handleOpen("meterGraph")}>
+           {/* <Typography variant="h6" align="center" noWrap>
+                      % contribution of each country 
+           </Typography> */}
+           <TotalStudentsMeter data={totalStudentsfiltered} />
+          <h3 style={{ marginTop: 0 }}>% contribution of each country</h3>
+        {/* </paper> */}
+       </Card>
+
+       <Card
+           className={classes.lineChart}
+           onClick={() => handleOpen("lineGraph")}>
+           {/* <Typography variant="h6" align="center" noWrap>
+              Student count from 2011 to 2020 
+           </Typography> */}
+           <StudentEnrolledLineChart data={studentByYearData} />
+           <h3 style={{ marginTop: 0 }}>Student count from 2011 to 2020</h3>
+      </Card>
+    </div>
+    <div style={{ display: "flex", marginBottom: "25px" }}>
+
+      <Card 
+        className={classes.paper}
+        onClick={() => handleOpen("facultyGraph")}>
+          <FacultyBarGraph data={facultyData}/>
+          <h3 style={{ marginTop: 0 }}>Faculty Department</h3>
+      </Card>
+      <Card
+            className={classes.gradStat}
+            onClick={() => handleOpen("gradStatusGraph")}
           >
-            <DoughnutChart data={gendersData} />
+            <PieChartGrad data={levelData} />
+            <h3 style={{ marginTop: 0 }}>graduate / undergraduate data</h3>
           </Card>
-          <Card
-            className={classes.ageBar}
-            onClick={() => handleOpen("ageGraph")}
-          >
-            <BarGraphForAge data={ageData} />
-          </Card>
-        </div>
-        <div style={{ display: "flex", marginBottom: "25px" }}>
-          
-          <Card
-            className={classes.lineChart}
-            onClick={() => handleOpen("lineGraph")}
-          >
-            <StudentEnrolledLineChart data={studentByYearData} />
-          </Card>
-        </div>
+    </div>      
+ 
 
       </main>
     </div>
