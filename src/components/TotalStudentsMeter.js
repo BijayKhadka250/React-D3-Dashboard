@@ -5,7 +5,7 @@ import "react-circular-progressbar/dist/styles.css";
 
 export default function TotalStudentsMeter(props) {
   const { data } = props;
-  const TOTAL_STUDENTS = 159685;
+  const TOTAL_STUDENTS = 159950;
 
   return (
     <div>

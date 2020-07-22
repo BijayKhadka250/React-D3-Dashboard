@@ -16,8 +16,6 @@ const ResidencyBarGraph = (props) => {
     const svg = d3.select(ref.current)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
-    // Define the div for the tooltip
     var div = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
@@ -43,7 +41,6 @@ const ResidencyBarGraph = (props) => {
     
     
     .enter().append("rect")
-    // .transition().duration(200)
     .attr("class", "bar")
     
     .attr("x", function(d) { return x(d.residency); })
@@ -64,21 +61,9 @@ const ResidencyBarGraph = (props) => {
             .duration(500)		
             .style("opacity", 0);	
     });          
-
-//     svg.selectAll("rect")
-//   .transition()
-//   .duration(800)
-//   .attr("y", function(d) { return y(d.count); })
-//   .attr("height", function(d) { return height - y(d.count); })
-//   .style("fill",function(d){return z(d.faculty)})
-//   .delay(function(d,i){console.log(i) ; return(i*100)})
   
-  
-    
-    
-    
 
-    svg.append("g")
+svg.append("g")
 .attr("class", "axis x")
 .attr("transform", "translate(0," + height + ")")
 .call(d3.axisBottom(x))
@@ -89,12 +74,6 @@ const ResidencyBarGraph = (props) => {
     .attr("transform", "rotate(90)")
     .style("text-anchor", "start");
 
-// svg.append("text")             
-//       .attr("transform",
-//             "translate(" + (width/2) + " ," + 
-//                            (height + margin.top + 20) + ")")
-//       .style("text-anchor", "middle")
-//       .text("Faculties");
 
 svg.append("g")
 .attr("class", "axis y")

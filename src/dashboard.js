@@ -22,8 +22,12 @@ import TotalStudentsMeter from "./components/TotalStudentsMeter";
 import { color } from "d3";
 import FacultyBarGraph from "./components/FacultyBarGraph";
 import PieChartGrad from "./components/PieChartGradUngrad";
+import CGPAPieChart from "./components/CGPAPieChart";
+import PieChartResidency from "./components/PieChartResidency";
 
 import FilterBar from "./filters";
+import PieChartPTFT from "./components/PieChartPTFT";
+// import BarGraphCountryPop from "./components/BarGraphCountryPop";
 
 import {
   fetchStudentsByYear,
@@ -36,6 +40,10 @@ import {
   fetchTotalStudents,
   fetchFaculty,
   fetchLevel,
+  fetchCGPA,
+  fetchResidency,
+  fetchPtFt,
+  fetchCountriesStudent,
 } from "./utils/apiStore";
 
 const drawerWidth = 280;
@@ -57,37 +65,45 @@ const useStyles = makeStyles((theme) => ({
   pieCard: {
     maxWidth: 500,
   },
-  lineChart: {
-    maxWidth: 600,
-    marginLeft: 35,
-  },
-  meter: {
-    width: 300,
-  },
+
   ageBar: {
     maxWidth: 500,
     marginLeft: 18,
   },
+  lineChart: {
+    maxWidth: 600,
+    marginLeft: 18,
+  },
+  meter: {
+    width: 300,
+    marginLeft: 18,
+  },
   halfPie: {
-    maxWidth: 400,
+    maxWidth: 350,
+  },
+  cgpaGraph: {
+    maxWidth: 370,
+    
   },
   ptftPie: {
     maxWidth: 500,
-    marginLeft: 35,
+    marginLeft: 18,
   },
   facultySpikyBar: {
     maxWidth: 415,
   },
   gradStat: {
-    maxWidth: 500,
-    marginLeft: 20,
+    maxWidth: 370,
+    marginLeft: 18,
   },
   map: {
     marginBottom: 20,
   },
-  cgpaGraph: {
-    marginBottom: 20,
+
+  countrypop: {
+    marginLeft: 18,
   },
+
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
@@ -126,6 +142,10 @@ export default function DashboardMain(props) {
   const [GeoJsonCountries, setGeoJsonCountries] = useState(defaultGeoJson);
   const [facultyData, setFacultyData] = useState([]);
   const [levelData, setLevelData] = useState([]);
+  const [cgpa, setCGPA] = useState([]);
+  const [residencyData, setResidencyData] = useState([]);
+  const [ptftData, setptftData] = useState([]);
+  const [countriesByStudentCount, setCountriesByStudentCount] = useState([]);
   
 
   const visualizations = {
@@ -166,18 +186,30 @@ export default function DashboardMain(props) {
         <PieChartGrad data={levelData} />
       </Card>
     ),
+    cgpaGraph: (
+      <Card>
+        <CGPAPieChart data={cgpa} />
+      </Card>
+    ),
+    halfPie: (
+      <Card className={classes.halfPie}>
+        <PieChartResidency data={residencyData} />
+      </Card>
+    ),
+    ptftPie: (
+      <Card className={classes.ptftPie}>
+        <PieChartPTFT data={ptftData} />
+      </Card>
+    ),
+
+    // countryPop: (
+    //   <Card className={classes.countrypop}>
+    //     <BarGraphCountryPop data={countriesByStudentCount} />
+    //   </Card>
+    // ),
     
   };
 
-//   if (countries.length < 1) fetchCountries();
-//   fetchJsonCountries();
-//   // fetchUnderGrad();
-//   fetchGradAndUnderGrad();
-//   // if (country == false && year==false && faculty == false) fetchStudentsByAge();
-//     fetchAges();
-//     fetchStudentsByFaculties();
-//     fetchGeoJsonCountries();
-// }, [countries, country,faculties,faculty,year,multipleCountry,level,gender]);
 
 
   const FilterBarProps = {
@@ -246,7 +278,40 @@ export default function DashboardMain(props) {
       yearFilter,
       gradStatusFilter
     );
+    fetchCGPA(
+      setCGPA,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
+    fetchResidency(
+      setResidencyData,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
 
+    fetchPtFt(
+      setptftData,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
+
+    fetchCountriesStudent(
+      setCountriesByStudentCount,
+      countryFilter,
+      facultyFilter,
+      genderFilter,
+      yearFilter,
+      gradStatusFilter
+    );
   
   }, [
     countryFilter,
@@ -332,19 +397,25 @@ export default function DashboardMain(props) {
           <h3 style={{ marginTop: 0 }}>Student count for different age group</h3> 
         {/* </paper>   */}
      </Card>
-    </div>
-
-      <div style={{ display: "flex", marginBottom: "30px" }}>  
-       <Card
+     <Card
         className={classes.meter}
            onClick={() => handleOpen("meterGraph")}>
            {/* <Typography variant="h6" align="center" noWrap>
                       % contribution of each country 
            </Typography> */}
            <TotalStudentsMeter data={totalStudentsfiltered} />
-          <h3 style={{ marginTop: 0 }}>% contribution of each country</h3>
+          <h3 style={{ marginTop: 0 }}>Students</h3>
         {/* </paper> */}
        </Card>
+    </div>
+
+      <div style={{ display: "flex", marginBottom: "30px" }}>  
+      <Card 
+        className={classes.paper}
+        onClick={() => handleOpen("facultyGraph")}>
+          <FacultyBarGraph data={facultyData}/>
+          <h3 style={{ marginTop: 0 }}>Faculty Department</h3>
+      </Card>
 
        <Card
            className={classes.lineChart}
@@ -356,23 +427,42 @@ export default function DashboardMain(props) {
            <h3 style={{ marginTop: 0 }}>Student count from 2011 to 2020</h3>
       </Card>
     </div>
-    <div style={{ display: "flex", marginBottom: "25px" }}>
 
-      <Card 
-        className={classes.paper}
-        onClick={() => handleOpen("facultyGraph")}>
-          <FacultyBarGraph data={facultyData}/>
-          <h3 style={{ marginTop: 0 }}>Faculty Department</h3>
-      </Card>
-      <Card
+    <div style={{ display: "flex", marginBottom: "25px" }}>
+    <Card
+            className={classes.halfPie}
+            onClick={() => handleOpen("halfPie")}
+          >
+            <PieChartResidency data={residencyData} />
+            <h3 style={{ marginTop: 0 }}>student data based on Residence</h3>
+    </Card>
+    <Card
+            className={classes.ptftPie}
+            onClick={() => handleOpen("ptftPie")}
+          >
+            <PieChartPTFT data={ptftData} />
+            <h3 style={{ marginTop: 0 }}>part time v/s full time</h3>
+    </Card>
+    <Card
             className={classes.gradStat}
             onClick={() => handleOpen("gradStatusGraph")}
           >
             <PieChartGrad data={levelData} />
             <h3 style={{ marginTop: 0 }}>graduate / undergraduate data</h3>
-          </Card>
-    </div>      
- 
+    </Card> 
+    </div>  
+
+    <div style={{ display: "flex", marginBottom: "25px" }}>
+    <Card
+          className={classes.cgpaGraph}
+          onClick={() => handleOpen("cgpaGraph")}
+        >
+          <CGPAPieChart data={cgpa} />
+          <h3 style={{ marginTop: 0 }}>CGPA</h3>
+    </Card> 
+
+
+    </div> 
 
       </main>
     </div>

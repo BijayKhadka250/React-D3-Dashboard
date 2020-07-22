@@ -2,7 +2,7 @@ export default (method, url, bodyData = []) =>
   new Promise(async (resolve, reject) => {
     try {
       const body = Object.keys(bodyData)
-        .map(key => `${key}=${bodyData[key]}`)
+        .map((key) => `${key}=${bodyData[key]}`)
         .join("&");
       let response;
       if (method === "GET") {
@@ -11,9 +11,9 @@ export default (method, url, bodyData = []) =>
         response = await fetch(url, {
           method,
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
           },
-          body
+          body,
         });
       }
       const data = await response.json();

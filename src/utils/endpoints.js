@@ -10,4 +10,8 @@ export default {
   fetchTotalStudents: `${baseURL}totalstudents`,
   fetchFaculty: `${baseURL}faculty`,
   fetchLevel: `${baseURL}level`,
+  fetchCGPA: `${baseURL}cgpa`,
+  fetchResidency: `${baseURL}residency`,
+  fetchPtFt: `${baseURL}pt_ft`,
+  fetchCountriesStudent: `${baseURL}countries/students`,
 };
