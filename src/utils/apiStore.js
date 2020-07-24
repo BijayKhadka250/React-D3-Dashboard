@@ -64,6 +64,7 @@ const fetchCountries = async (setCountries) => {
   }
 };
 
+
 const fetchFaculties = async (setFaculties) => {
   try {
     const resp = await fetch("GET", endpoints.fetchFaculties);
@@ -83,20 +84,61 @@ const fetchJsonCountries = async (setJsonCountries) => {
   }
 };
 
+// const fetchJsonCountries = async (
+//   setMapData,
+//   countryFilter,
+//   facultyFilter,
+//   genderFilter,
+//   yearFilter,
+//   gradStatusFilter
+// ) => {
+//   let genderFilterModified = [];
 
-const fetchGeoJsonCountries =async (setGeoJsonCountries) => {
-  try {
-    const GeoJsonCountries = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
-    console.log(GeoJsonCountries);
+//   if (genderFilter.length > 0) {
+//     genderFilter.forEach((item) => {
+//       if (item === "Male") {
+//         genderFilterModified.push("M");
+//       } else if (item === "Female") {
+//         genderFilterModified.push("F");
+//       } else if (item === "Non-Binary") {
+//         genderFilterModified.push("N");
+//       }
+//     });
+//   }
 
-    setGeoJsonCountries(GeoJsonCountries);
-    console.log(GeoJsonCountries);
+//   countryFilter = countryFilter.length === 0 ? "any" : countryFilter;
+//   facultyFilter = facultyFilter.length === 0 ? "any" : facultyFilter;
+//   genderFilterModified =
+//     genderFilter.length === 0 ? "any" : genderFilterModified;
+//   yearFilter = yearFilter.length === 0 ? "any" : yearFilter;
+//   gradStatusFilter = gradStatusFilter.length === 0 ? "any" : gradStatusFilter;
+
+//   const body = {
+//     country: countryFilter,
+//     faculty: facultyFilter,
+//     gender: genderFilterModified,
+//     year: yearFilter,
+//     level: gradStatusFilter,
+//   };
+
+//   const resp = await fetch("POST", endpoints.fetchApi, body);
+//   setMapData(resp);
+// };
 
 
-  } catch (e) {
-    console.log(e);
-  }
-}
+// const fetchGeoJsonCountries =async (setGeoJsonCountries) => {
+//   try {
+//     const GeoJsonCountries = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+//     console.log(GeoJsonCountries);
+
+//     setGeoJsonCountries(GeoJsonCountries);
+//     console.log(GeoJsonCountries);
+
+
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
 const fetchGenders = async (
   setGendersData,
@@ -501,8 +543,7 @@ export {
   fetchStudentsByYear,
   fetchCountries,
   fetchFaculties,
-  fetchJsonCountries,
-  fetchGeoJsonCountries,
+  // fetchGeoJsonCountries,
   fetchGenders,
   fetchAge,
   fetchTotalStudents,
@@ -511,5 +552,6 @@ export {
   fetchCGPA,
   fetchResidency,
   fetchPtFt,
+  fetchJsonCountries,
   fetchCountriesStudent
 };

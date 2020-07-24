@@ -4,23 +4,7 @@ import { select, geoPath, geoMercator } from "d3";
 import "./Geomap.css";
 
 function Geomap(props) {
-  // console.log(data)
-  // console.log(props.api)
-  // const [geographies, setGeographies] = useState([])
-
-  // fetch("http://140.184.230.103:5000/api")
-  //     .then(response => {
-  //         if (response.status !== 200){
-  //             console.log(`there was a problem:`)
-  //             return
-  //         }
-  //         response.json().then(worlddata => {
-  //             // console.log(worlddata)
-  //             setGeographies(worlddata)
-  //             // console.log(geographies)
-  //         })
-  //     })
-  // console.log(data.features)
+  
 
   const svgRef = useRef();
   const wrapperRef = useRef();
@@ -29,13 +13,10 @@ function Geomap(props) {
   var width = 800 - margin.left - margin.right;
   var height = 400 - margin.top - margin.bottom;
 
-  // console.log(Countries.features)
+ 
   const svg = d3.select(svgRef.current).insert("svg");
 
-  //  use resized dimensions
-  // but fall back to getBoundingClientRect, if no dimensions yet.
-  // const { width, height } =
-  //   dimensions || wrapperRef.current.getBoundingClientRect();
+
   const projection = geoMercator().scale(120).translate([400, 200]);
   const pathGenerator = geoPath().projection(projection);
 
@@ -49,7 +30,6 @@ function Geomap(props) {
     .style("stroke", "black")
     .style("stroke-width", 0.5)
     .on("mouseover", function (d) {
-      //    console.log(d)
       d3.select(this)
         .style("fill", "#6C0")
         .append("svg")
@@ -64,15 +44,9 @@ function Geomap(props) {
     .domain([0, 10, 50, 100, 500, 20289])
     .range(["#000000", "#ffab00", "#00c853", "#3e2723", "#304ffe", "#d50000"]);
 
-  //
-
-  //  will be called initially and on every data change
-  //  useEffect(() => {
-  //     console.log(api)
-
   svg
     .append("g")
-    // .attr("class", "bubble")
+
     .selectAll(".circles")
     .data(props.api)
     .enter()
@@ -158,7 +132,7 @@ function Geomap(props) {
     .style("font-size", "15px")
     .attr("alignment-baseline", "middle");
 
-  //  },[svg,props.api,projection,colors] )
+
 
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>

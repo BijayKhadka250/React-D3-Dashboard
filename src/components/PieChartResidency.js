@@ -36,7 +36,7 @@ export default class PieChartResidency extends PureComponent {
           startAngle={180}
           endAngle={0}
           data={data}
-          cx={130}
+          cx={150}
           cy={250}
           outerRadius={100}
           fill="#8884d8"

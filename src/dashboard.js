@@ -27,14 +27,14 @@ import PieChartResidency from "./components/PieChartResidency";
 
 import FilterBar from "./filters";
 import PieChartPTFT from "./components/PieChartPTFT";
-// import BarGraphCountryPop from "./components/BarGraphCountryPop";
+import BarGraphCountryPop from "./components/BarGraphCountryPop";
 
 import {
   fetchStudentsByYear,
   fetchCountries,
   fetchFaculties,
   fetchJsonCountries,
-  fetchGeoJsonCountries,
+  // fetchGeoJsonCountries,
   fetchAge,
   fetchGenders,
   fetchTotalStudents,
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
   lineChart: {
     maxWidth: 600,
-    marginLeft: 18,
+    
   },
   meter: {
     width: 300,
@@ -114,6 +114,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    marginLeft: 18,
   },
 }));
 
@@ -146,12 +147,13 @@ export default function DashboardMain(props) {
   const [residencyData, setResidencyData] = useState([]);
   const [ptftData, setptftData] = useState([]);
   const [countriesByStudentCount, setCountriesByStudentCount] = useState([]);
+  // const [MapData, setMapData] = useState([]);
   
 
   const visualizations = {
     mapGraph: (
       <Card className={classes.map}>
-        <GeoMap data={data} api={GeoJsonCountries} />
+        <GeoMap data={data} api={JsonCountries} />
       </Card>
     ),
     genderGraph: (
@@ -202,11 +204,11 @@ export default function DashboardMain(props) {
       </Card>
     ),
 
-    // countryPop: (
-    //   <Card className={classes.countrypop}>
-    //     <BarGraphCountryPop data={countriesByStudentCount} />
-    //   </Card>
-    // ),
+    countryPop: (
+      <Card className={classes.countrypop}>
+        <BarGraphCountryPop data={countriesByStudentCount} />
+      </Card>
+    ),
     
   };
 
@@ -226,7 +228,8 @@ export default function DashboardMain(props) {
     // fetchStudentsByYear(setStudentByYearData);
     fetchCountries(setCountries);
     fetchFaculties(setFaculties);
-    fetchGeoJsonCountries(setGeoJsonCountries);
+    // fetchGeoJsonCountries(setGeoJsonCountries);
+    fetchJsonCountries(setJsonCountries);
   }, []);
 
   useEffect(() => {
@@ -312,6 +315,15 @@ export default function DashboardMain(props) {
       yearFilter,
       gradStatusFilter
     );
+
+    // fetchJsonCountries(
+    //   setJsonCountries,
+    //   countryFilter,
+    //   facultyFilter,
+    //   genderFilter,
+    //   yearFilter,
+    //   gradStatusFilter
+    // );
   
   }, [
     countryFilter,
@@ -368,9 +380,9 @@ export default function DashboardMain(props) {
       
 
 
-      <main className={classes.content}>
-        <Card className={classes.map} onClick={() => handleOpen("mapGraph")}>
-          <GeoMap data={data} api={GeoJsonCountries} />
+      <main className={classes.content}> 
+      <Card className={classes.map} onClick={() => handleOpen("mapGraph")}>
+          <GeoMap data={data} api={JsonCountries} />
         </Card>
 
 
@@ -410,14 +422,8 @@ export default function DashboardMain(props) {
     </div>
 
       <div style={{ display: "flex", marginBottom: "30px" }}>  
-      <Card 
-        className={classes.paper}
-        onClick={() => handleOpen("facultyGraph")}>
-          <FacultyBarGraph data={facultyData}/>
-          <h3 style={{ marginTop: 0 }}>Faculty Department</h3>
-      </Card>
 
-       <Card
+      <Card
            className={classes.lineChart}
            onClick={() => handleOpen("lineGraph")}>
            {/* <Typography variant="h6" align="center" noWrap>
@@ -426,6 +432,15 @@ export default function DashboardMain(props) {
            <StudentEnrolledLineChart data={studentByYearData} />
            <h3 style={{ marginTop: 0 }}>Student count from 2011 to 2020</h3>
       </Card>
+
+      <Card 
+        className={classes.paper}
+        onClick={() => handleOpen("facultyGraph")}>
+          <FacultyBarGraph data={facultyData}/>
+          <h3 style={{ marginTop: 0 }}>Faculty Department</h3>
+      </Card>
+
+
     </div>
 
     <div style={{ display: "flex", marginBottom: "25px" }}>
@@ -460,7 +475,12 @@ export default function DashboardMain(props) {
           <CGPAPieChart data={cgpa} />
           <h3 style={{ marginTop: 0 }}>CGPA</h3>
     </Card> 
-
+    <Card 
+    className={classes.countrypop}
+    onClick={() => handleOpen("countryPop")}>
+          <BarGraphCountryPop data={countriesByStudentCount} />
+          <h3 style={{ marginTop: 0 }}>Top 10 International Countries Based on different Category</h3>
+    </Card>
 
     </div> 
 
