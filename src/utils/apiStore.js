@@ -65,6 +65,7 @@ const fetchCountries = async (setCountries) => {
 };
 
 
+
 const fetchFaculties = async (setFaculties) => {
   try {
     const resp = await fetch("GET", endpoints.fetchFaculties);
@@ -84,61 +85,6 @@ const fetchJsonCountries = async (setJsonCountries) => {
   }
 };
 
-// const fetchJsonCountries = async (
-//   setMapData,
-//   countryFilter,
-//   facultyFilter,
-//   genderFilter,
-//   yearFilter,
-//   gradStatusFilter
-// ) => {
-//   let genderFilterModified = [];
-
-//   if (genderFilter.length > 0) {
-//     genderFilter.forEach((item) => {
-//       if (item === "Male") {
-//         genderFilterModified.push("M");
-//       } else if (item === "Female") {
-//         genderFilterModified.push("F");
-//       } else if (item === "Non-Binary") {
-//         genderFilterModified.push("N");
-//       }
-//     });
-//   }
-
-//   countryFilter = countryFilter.length === 0 ? "any" : countryFilter;
-//   facultyFilter = facultyFilter.length === 0 ? "any" : facultyFilter;
-//   genderFilterModified =
-//     genderFilter.length === 0 ? "any" : genderFilterModified;
-//   yearFilter = yearFilter.length === 0 ? "any" : yearFilter;
-//   gradStatusFilter = gradStatusFilter.length === 0 ? "any" : gradStatusFilter;
-
-//   const body = {
-//     country: countryFilter,
-//     faculty: facultyFilter,
-//     gender: genderFilterModified,
-//     year: yearFilter,
-//     level: gradStatusFilter,
-//   };
-
-//   const resp = await fetch("POST", endpoints.fetchApi, body);
-//   setMapData(resp);
-// };
-
-
-// const fetchGeoJsonCountries =async (setGeoJsonCountries) => {
-//   try {
-//     const GeoJsonCountries = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
-//     console.log(GeoJsonCountries);
-
-//     setGeoJsonCountries(GeoJsonCountries);
-//     console.log(GeoJsonCountries);
-
-
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
 
 const fetchGenders = async (
   setGendersData,
@@ -410,8 +356,6 @@ const fetchResidency = async (
   setResidencyData(resp);
 };
 
-
-// adding level(grad and undergrad) pie chart
 const fetchLevel = async (
   setLevelData,
   countryFilter,
@@ -495,6 +439,9 @@ const fetchPtFt = async (
   setPtFtData(resp);
 };
 
+
+
+
 const fetchCountriesStudent = async (
   setCountriesByStudentCount,
   countryFilter,
@@ -543,7 +490,6 @@ export {
   fetchStudentsByYear,
   fetchCountries,
   fetchFaculties,
-  // fetchGeoJsonCountries,
   fetchGenders,
   fetchAge,
   fetchTotalStudents,

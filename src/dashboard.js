@@ -5,6 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import endpoints from "./utils/endpoints";
 
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -28,13 +29,13 @@ import PieChartResidency from "./components/PieChartResidency";
 import FilterBar from "./filters";
 import PieChartPTFT from "./components/PieChartPTFT";
 import BarGraphCountryPop from "./components/BarGraphCountryPop";
+import Gmap1 from './components/Geomap1'
 
 import {
   fetchStudentsByYear,
   fetchCountries,
   fetchFaculties,
   fetchJsonCountries,
-  // fetchGeoJsonCountries,
   fetchAge,
   fetchGenders,
   fetchTotalStudents,
@@ -44,6 +45,7 @@ import {
   fetchResidency,
   fetchPtFt,
   fetchCountriesStudent,
+  // fetchGeoJsonCountries,
 } from "./utils/apiStore";
 
 const drawerWidth = 280;
@@ -137,16 +139,18 @@ export default function DashboardMain(props) {
   const [gendersData, setGendersData] = useState([]);
   const [ageData, setAgeData] = useState([]);
   const [JsonCountries, setJsonCountries] = useState([]);
+  // const [JsonCountries1, setJsonCountries1] = useState([]);
   const [openModal, toggleModal] = useState(false);
   const [currentVisualization, setCurrentVisualization] = useState("age");
   const [totalStudentsfiltered, setTotalStudentsfiltered] = useState(0);
-  const [GeoJsonCountries, setGeoJsonCountries] = useState(defaultGeoJson);
   const [facultyData, setFacultyData] = useState([]);
   const [levelData, setLevelData] = useState([]);
   const [cgpa, setCGPA] = useState([]);
   const [residencyData, setResidencyData] = useState([]);
   const [ptftData, setptftData] = useState([]);
   const [countriesByStudentCount, setCountriesByStudentCount] = useState([]);
+  // const [GeoJsonCountries, setGeoJsonCountries] = useState(defaultGeoJson);
+  // const [GeoJsonCountries1, setGeoJsonCountries1] = useState(defaultGeoJson);
   // const [MapData, setMapData] = useState([]);
   
 
@@ -154,6 +158,11 @@ export default function DashboardMain(props) {
     mapGraph: (
       <Card className={classes.map}>
         <GeoMap data={data} api={JsonCountries} />
+      </Card>
+    ),
+    mapGraph1: (
+      <Card className={classes.map}>
+        <Gmap1 data={data} api={JsonCountries} />
       </Card>
     ),
     genderGraph: (
@@ -230,6 +239,22 @@ export default function DashboardMain(props) {
     fetchFaculties(setFaculties);
     // fetchGeoJsonCountries(setGeoJsonCountries);
     fetchJsonCountries(setJsonCountries);
+
+    // const fetchGeoJsonCountries =async() => {
+    //   try {
+    //     const JsonCountry = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+    //     console.log(JsonCountry);
+    //     // console.log(JsonCountry.features);
+
+    //     //const countryArray = resp.map(country => country.citizenship);
+    //     setGeoJsonCountries(JsonCountry);
+    //     console.log(GeoJsonCountries);
+
+
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
   }, []);
 
   useEffect(() => {
@@ -316,15 +341,6 @@ export default function DashboardMain(props) {
       gradStatusFilter
     );
 
-    // fetchJsonCountries(
-    //   setJsonCountries,
-    //   countryFilter,
-    //   facultyFilter,
-    //   genderFilter,
-    //   yearFilter,
-    //   gradStatusFilter
-    // );
-  
   }, [
     countryFilter,
     facultyFilter,
@@ -332,6 +348,35 @@ export default function DashboardMain(props) {
     yearFilter,
     gradStatusFilter,
   ]);
+
+  // useEffect(() => {
+
+
+    // const fetchJsonCountries1 = async() => {
+    //   try {
+    //     const JsonCountry1 = await fetch("GET", endpoints.fetchApi);
+    //     setJsonCountries1(JsonCountry1);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // };
+
+  //   const fetchGeoJsonCountries =async() => {
+  //     try {
+  //       const JsonCountry = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+  //       console.log(JsonCountry);
+  //       setGeoJsonCountries(JsonCountry);
+  //       console.log(GeoJsonCountries);
+
+
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   }
+  // fetchGeoJsonCountries();
+
+  // });
+
 
   const handleOpen = (value) => {
     setCurrentVisualization(value);
@@ -385,6 +430,11 @@ export default function DashboardMain(props) {
           <GeoMap data={data} api={JsonCountries} />
         </Card>
 
+        <Card className={classes.map} onClick={() => handleOpen("mapGraph1")}>
+            <Gmap1 data={data} api={JsonCountries}/>
+            <h3 style={{ marginTop: 0 }}>Students From Various Countries in SMU</h3>
+        </Card>
+
 
 
     <div style={{ display: "flex", marginBottom: "25px" }}>
@@ -402,9 +452,6 @@ export default function DashboardMain(props) {
       <Card
           className={classes.ageBar}
           onClick={() => handleOpen("ageGraph")}>
-          {/* <Typography variant="h6" align="center" noWrap>
-             Student count for different age group 
-          </Typography> */}
           <BarGraphForAge data={ageData} />
           <h3 style={{ marginTop: 0 }}>Student count for different age group</h3> 
         {/* </paper>   */}
@@ -412,9 +459,6 @@ export default function DashboardMain(props) {
      <Card
         className={classes.meter}
            onClick={() => handleOpen("meterGraph")}>
-           {/* <Typography variant="h6" align="center" noWrap>
-                      % contribution of each country 
-           </Typography> */}
            <TotalStudentsMeter data={totalStudentsfiltered} />
           <h3 style={{ marginTop: 0 }}>Students</h3>
         {/* </paper> */}
@@ -426,9 +470,6 @@ export default function DashboardMain(props) {
       <Card
            className={classes.lineChart}
            onClick={() => handleOpen("lineGraph")}>
-           {/* <Typography variant="h6" align="center" noWrap>
-              Student count from 2011 to 2020 
-           </Typography> */}
            <StudentEnrolledLineChart data={studentByYearData} />
            <h3 style={{ marginTop: 0 }}>Student count from 2011 to 2020</h3>
       </Card>
@@ -437,7 +478,7 @@ export default function DashboardMain(props) {
         className={classes.paper}
         onClick={() => handleOpen("facultyGraph")}>
           <FacultyBarGraph data={facultyData}/>
-          <h3 style={{ marginTop: 0 }}>Faculty Department</h3>
+          <h3 style={{ marginTop: 0 }}>student count based on faculty</h3>
       </Card>
 
 
@@ -449,21 +490,21 @@ export default function DashboardMain(props) {
             onClick={() => handleOpen("halfPie")}
           >
             <PieChartResidency data={residencyData} />
-            <h3 style={{ marginTop: 0 }}>student data based on Residence</h3>
+            <h3 style={{ marginTop: 0 }}>Student data based on residence</h3>
     </Card>
     <Card
             className={classes.ptftPie}
             onClick={() => handleOpen("ptftPie")}
           >
             <PieChartPTFT data={ptftData} />
-            <h3 style={{ marginTop: 0 }}>part time v/s full time</h3>
+            <h3 style={{ marginTop: 0 }}>Part time vs Full time</h3>
     </Card>
     <Card
             className={classes.gradStat}
             onClick={() => handleOpen("gradStatusGraph")}
           >
             <PieChartGrad data={levelData} />
-            <h3 style={{ marginTop: 0 }}>graduate / undergraduate data</h3>
+            <h3 style={{ marginTop: 0 }}>Graduate vs Undergraduate</h3>
     </Card> 
     </div>  
 
@@ -479,7 +520,7 @@ export default function DashboardMain(props) {
     className={classes.countrypop}
     onClick={() => handleOpen("countryPop")}>
           <BarGraphCountryPop data={countriesByStudentCount} />
-          <h3 style={{ marginTop: 0 }}>Top 10 International Countries Based on different Category</h3>
+          <h3 style={{ marginTop: 0 }}>Top 10 international countries based on different category</h3>
     </Card>
 
     </div> 

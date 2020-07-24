@@ -8,10 +8,12 @@ export default {
   fetchFaculties: `${baseURL}faculties`,
   fetchApi: `${baseURL}api`,
   fetchTotalStudents: `${baseURL}totalstudents`,
+  // fetchGeoJsonCountries: `${baseURL}geojson`,
   fetchFaculty: `${baseURL}faculty`,
   fetchLevel: `${baseURL}level`,
   fetchCGPA: `${baseURL}cgpa`,
   fetchResidency: `${baseURL}residency`,
   fetchPtFt: `${baseURL}pt_ft`,
   fetchCountriesStudent: `${baseURL}countries/students`,
+  
 };
