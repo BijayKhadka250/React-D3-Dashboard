@@ -1,3 +1,18 @@
 svg path .country {
     background-color : #ccc;
 }
+
+div.tooltip6 {	
+    position: absolute;			
+    text-align: center;			
+    /* width: 100px;					
+    height: 28px;					 */
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background:white;	
+    border: solid;
+    border-width: 2px;
+    padding: 5px;
+    border-radius: 5px;			
+    pointer-events: none;		
+  }
