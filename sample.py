@@ -9,6 +9,7 @@ from flask import Flask, render_template, jsonify
 from flask_mysqldb import MySQL
 from flask import request
 from flask_cors import CORS
+import json
 
 app = Flask(__name__)
 app.config['MYSQL_USER'] = 'dataman'
@@ -19,6 +20,11 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 CORS(app)
 mysql = MySQL(app)
 
+
+def makedata():
+    with open('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson') as data_file:
+        data = json.load(data_file)
+    return data
 
 @app.route('/')
 def main():
@@ -64,6 +70,12 @@ def session_api():
         "SELECT name, latitude, longitude, count FROM long_lat, countries WHERE countries.citizenship=long_lat.name")
     data = cur.fetchall()
     return jsonify(data)
+
+@app.route('/geojson')
+def fetch_geojson():
+    
+    return jsonify(data1=json.dumps(makedata()))
+
 
 
 @app.route('/countries')
