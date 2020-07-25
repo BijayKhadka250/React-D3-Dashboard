@@ -45,7 +45,7 @@ export default class BarGraphCountryPop extends PureComponent {
 
     return (
       <BarChart
-        width={900}
+        width={870}
         height={420}
         data={modifiedData}
         margin={{

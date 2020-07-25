@@ -66,22 +66,25 @@ const useStyles = makeStyles((theme) => ({
   },
   pieCard: {
     maxWidth: 500,
+    margintop: 10,
   },
 
   ageBar: {
     maxWidth: 500,
-    marginLeft: 18,
+    marginLeft: 10,
   },
   lineChart: {
     maxWidth: 600,
+    margintop: 8,
     
   },
   meter: {
     width: 300,
-    marginLeft: 18,
+    marginLeft: 10,
   },
   halfPie: {
     maxWidth: 350,
+    margintop: 4,
   },
   cgpaGraph: {
     maxWidth: 370,
@@ -89,21 +92,21 @@ const useStyles = makeStyles((theme) => ({
   },
   ptftPie: {
     maxWidth: 500,
-    marginLeft: 18,
+    marginLeft: 10,
   },
   facultySpikyBar: {
     maxWidth: 415,
   },
   gradStat: {
     maxWidth: 370,
-    marginLeft: 18,
+    marginLeft: 10,
   },
   map: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
   countrypop: {
-    marginLeft: 18,
+    marginLeft: 10,
   },
 
   toolbar: theme.mixins.toolbar,
@@ -116,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    marginLeft: 18,
+    marginLeft: 10,
   },
 }));
 
@@ -234,27 +237,10 @@ export default function DashboardMain(props) {
   };
 
   useEffect(() => {
-    // fetchStudentsByYear(setStudentByYearData);
     fetchCountries(setCountries);
     fetchFaculties(setFaculties);
-    // fetchGeoJsonCountries(setGeoJsonCountries);
     fetchJsonCountries(setJsonCountries);
 
-    // const fetchGeoJsonCountries =async() => {
-    //   try {
-    //     const JsonCountry = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
-    //     console.log(JsonCountry);
-    //     // console.log(JsonCountry.features);
-
-    //     //const countryArray = resp.map(country => country.citizenship);
-    //     setGeoJsonCountries(JsonCountry);
-    //     console.log(GeoJsonCountries);
-
-
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // }
   }, []);
 
   useEffect(() => {
@@ -349,35 +335,6 @@ export default function DashboardMain(props) {
     gradStatusFilter,
   ]);
 
-  // useEffect(() => {
-
-
-    // const fetchJsonCountries1 = async() => {
-    //   try {
-    //     const JsonCountry1 = await fetch("GET", endpoints.fetchApi);
-    //     setJsonCountries1(JsonCountry1);
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // };
-
-  //   const fetchGeoJsonCountries =async() => {
-  //     try {
-  //       const JsonCountry = await fetch("GET", "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
-  //       console.log(JsonCountry);
-  //       setGeoJsonCountries(JsonCountry);
-  //       console.log(GeoJsonCountries);
-
-
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   }
-  // fetchGeoJsonCountries();
-
-  // });
-
-
   const handleOpen = (value) => {
     setCurrentVisualization(value);
     toggleModal(true);
@@ -460,7 +417,7 @@ export default function DashboardMain(props) {
         className={classes.meter}
            onClick={() => handleOpen("meterGraph")}>
            <TotalStudentsMeter data={totalStudentsfiltered} />
-          <h3 style={{ marginTop: 0 }}>Students</h3>
+          <h3 style={{ marginTop: 0 }}>% of students from each category vs overall student count(%)</h3>
         {/* </paper> */}
        </Card>
     </div>
