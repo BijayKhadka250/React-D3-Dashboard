@@ -29,7 +29,7 @@ import PieChartResidency from "./components/PieChartResidency";
 import FilterBar from "./filters";
 import PieChartPTFT from "./components/PieChartPTFT";
 import BarGraphCountryPop from "./components/BarGraphCountryPop";
-import Geomap1 from './components/Geomap1'
+import Gmap1 from './components/Geomap1'
 
 import {
   fetchStudentsByYear,
@@ -45,6 +45,7 @@ import {
   fetchResidency,
   fetchPtFt,
   fetchCountriesStudent,
+  // fetchGeoJsonCountries,
 } from "./utils/apiStore";
 
 const drawerWidth = 280;
@@ -60,14 +61,12 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
     flexShrink: 0,
   },
-
   drawerPaper: {
     width: drawerWidth,
   },
-
   pieCard: {
     maxWidth: 500,
-    marginLeft: 0,
+    margintop: 10,
   },
 
   ageBar: {
@@ -76,11 +75,8 @@ const useStyles = makeStyles((theme) => ({
   },
   lineChart: {
     maxWidth: 600,
+    margintop: 8,
     
-  },
-  facultySpikyBar: {
-    maxWidth: 400,
-  
   },
   meter: {
     width: 300,
@@ -91,23 +87,26 @@ const useStyles = makeStyles((theme) => ({
     margintop: 4,
   },
   cgpaGraph: {
-    maxWidth: 370,  
+    maxWidth: 370,
+    
   },
   ptftPie: {
     maxWidth: 500,
-    marginLeft: 8,
+    marginLeft: 10,
   },
-
+  facultySpikyBar: {
+    maxWidth: 415,
+  },
   gradStat: {
     maxWidth: 370,
-    marginLeft: 8,
+    marginLeft: 10,
   },
   map: {
-    marginBottom: 6,
+    marginBottom: 10,
   },
 
   countrypop: {
-    marginLeft: 6,
+    marginLeft: 10,
   },
 
   toolbar: theme.mixins.toolbar,
@@ -153,6 +152,9 @@ export default function DashboardMain(props) {
   const [residencyData, setResidencyData] = useState([]);
   const [ptftData, setptftData] = useState([]);
   const [countriesByStudentCount, setCountriesByStudentCount] = useState([]);
+  // const [GeoJsonCountries, setGeoJsonCountries] = useState(defaultGeoJson);
+  // const [GeoJsonCountries1, setGeoJsonCountries1] = useState(defaultGeoJson);
+  // const [MapData, setMapData] = useState([]);
   
 
   const visualizations = {
@@ -163,7 +165,7 @@ export default function DashboardMain(props) {
     ),
     mapGraph1: (
       <Card className={classes.map}>
-        <Geomap1 data={data} api={JsonCountries} />
+        <Gmap1 data={data} api={JsonCountries} />
       </Card>
     ),
     genderGraph: (
@@ -381,14 +383,25 @@ export default function DashboardMain(props) {
 
 
       <main className={classes.content}> 
+      {/* <Grid container spacing={3}>
+        <Grid item xs={12} 
+        onClick={() => handleOpen("mapGraph")}
+        >
+          <Paper className={classes.paper}>
+          <Typography variant="h6" align="center" noWrap>
+            Students From Various Country in SMU
+          </Typography>
+            <GeoMap data={data} api={JsonCountries}/>
+          </Paper>
+        </Grid> */}
       <Card className={classes.map} onClick={() => handleOpen("mapGraph")}>
           <GeoMap data={data} api={JsonCountries} />
         </Card>
 
-        <Card className={classes.map} onClick={() => handleOpen("mapGraph1")}>
-            <Geomap1 data={data} api={JsonCountries}/>
+        {/* <Card className={classes.map} onClick={() => handleOpen("mapGraph1")}>
+            <Gmap1 data={data} api={JsonCountries}/>
             <h3 style={{ marginTop: 0 }}>Students From Various Countries in SMU</h3>
-        </Card>
+        </Card> */}
 
 
 
