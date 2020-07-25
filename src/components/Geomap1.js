@@ -1,14 +1,12 @@
 import React,{useEffect,useRef,useState,Component} from 'react'
 import * as d3 from 'd3'
 import {select,geoPath, geoMercator} from 'd3'
-import './Geomap1.css'
+import './Geomap.css'
 
 
 
 
-function Gmap1(props)  {
-
-    // console.log("Geomap")
+function Geomap1(props)  {
 
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
     width = 960 - margin.left - margin.right,
@@ -61,6 +59,11 @@ useEffect(() => {
         }
      });
  });
+
+ var div = d3.select("body").append("div")	
+      .attr("class", "tooltip6")				
+      .style("opacity", 0)
+
     svg.append("g")
       .attr("class", "countries")
     .selectAll("path")
@@ -77,6 +80,20 @@ useEffect(() => {
       .style('stroke', 'white')
       .style('stroke-width', 1.5)
       .style("opacity",0.8)
+      .on("mouseover", function(d) {
+        console.log(d)		
+        div.transition()		
+            .duration(200)		
+            .style("opacity", .9);		
+        div	.html(d.properties.name +": "+d.count)	
+            .style("left", (d3.event.pageX) + "px")		
+            .style("top", (d3.event.pageY - 28) + "px");	
+        })					
+      .on("mouseout", function(d) {		
+        div	
+        .style("opacity", 0);	
+    });  
+
 
    
 
@@ -105,19 +122,8 @@ useEffect(() => {
     
    
   
-        
-        
-   
 
-//  },[svg,props.api,projection,colors] )
-  
-
-    
-   
-
- 
      return (
-        //  <h1>hi</h1>
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
         
       <svg width={width+ margin.left + margin.right} height={height + margin.top + margin.bottom} ref={svgRef}></svg>
@@ -127,5 +133,4 @@ useEffect(() => {
 
  }
 
-export default Gmap1;
-
+export default Geomap1;

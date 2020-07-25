@@ -1,14 +1,12 @@
-div.tooltip2  {	
+div.tooltip2 {	
     position: absolute;			
     text-align: center;			
-    /* width: 100px;					
-    height: 28px;					 */
+    width: 50px;					
+    height: 28px;					
     padding: 2px;				
     font: 12px sans-serif;		
-    background:white;	
-    border: solid;
-    border-width: 2px;
-    padding: 5px;
-    border-radius: 5px;			
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
     pointer-events: none;			
-} 
+}

@@ -3,11 +3,11 @@ import * as d3 from "d3";
 import './FacultyBarGraph.css'
 
 const FacultyBarGraph = (props) => {
-    // console.log(props.data)
+
     const ref = useRef(null);
 
     
-        var margin = {top: 20, right: 0, bottom: 150, left: 60};
+    var margin = {top: 20, right: 0, bottom: 150, left: 60};
     var width = 600 - margin.left - margin.right;
     var height = 400 - margin.top - margin.bottom;
 
@@ -19,7 +19,7 @@ const FacultyBarGraph = (props) => {
     
     // Define the div for the tooltip
     var div = d3.select("body").append("div")	
-    .attr("class", "tooltip3")				
+    .attr("class", "tooltip")				
     .style("opacity", 0);
 
     var z = d3.scaleOrdinal()
@@ -55,7 +55,7 @@ const FacultyBarGraph = (props) => {
         div.transition()		
             .duration(200)		
             .style("opacity", .9);		
-        div	.html(d.faculty+"<br>"+d.count)	
+        div	.html(d.count)	
             .style("left", (d3.event.pageX) + "px")		
             .style("top", (d3.event.pageY - 28) + "px");	
         })					
@@ -64,14 +64,6 @@ const FacultyBarGraph = (props) => {
             .duration(500)		
             .style("opacity", 0);	
     });          
-
-//     svg.selectAll("rect")
-//   .transition()
-//   .duration(800)
-//   .attr("y", function(d) { return y(d.count); })
-//   .attr("height", function(d) { return height - y(d.count); })
-//   .style("fill",function(d){return z(d.faculty)})
-//   .delay(function(d,i){console.log(i) ; return(i*100)})
   
   
     
@@ -88,13 +80,6 @@ const FacultyBarGraph = (props) => {
     .attr("dy", ".50em")
     .attr("transform", "rotate(90)")
     .style("text-anchor", "start");
-
-// svg.append("text")             
-//       .attr("transform",
-//             "translate(" + (width/2) + " ," + 
-//                            (height + margin.top + 20) + ")")
-//       .style("text-anchor", "middle")
-//       .text("Faculties");
 
 svg.append("g")
 .attr("class", "axis y")
