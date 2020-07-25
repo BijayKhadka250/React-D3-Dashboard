@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import "./CGPAPieChart.css";
-import { tooltipContext } from "./useTooltip";
 import { Tooltip } from "recharts";
 
 const size = {

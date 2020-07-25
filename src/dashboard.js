@@ -471,17 +471,6 @@ export default function DashboardMain(props) {
               <GeoMap data={data} api={JsonCountries} />
             </Card>
           </Grid>
-          <Grid item xs={12} className={{ item: classes.screenWidth }}>
-            <Card
-              className={classes.map}
-              onClick={() => handleOpen("mapGraph1")}
-            >
-              <Gmap1 data={data} api={JsonCountries} />
-              <h3 style={{ marginTop: 0 }}>
-                Students From Various Countries in SMU
-              </h3>
-            </Card>
-          </Grid>
           <Grid item xs={6} lg={4}>
             <Card
               className={classes.cardStd}
