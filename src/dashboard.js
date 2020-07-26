@@ -29,12 +29,11 @@ import PieChartResidency from "./components/PieChartResidency";
 import FilterBar from "./filters";
 import PieChartPTFT from "./components/PieChartPTFT";
 import BarGraphCountryPop from "./components/BarGraphCountryPop";
-import Gmap1 from './components/Geomap1'
+import Geomap1 from './components/Geomap1'
 
 import {
   fetchStudentsByYear,
   fetchCountries,
-  fetchFaculties,
   fetchJsonCountries,
   fetchAge,
   fetchGenders,
@@ -45,6 +44,7 @@ import {
   fetchResidency,
   fetchPtFt,
   fetchCountriesStudent,
+  fetchFaculties,
   // fetchGeoJsonCountries,
 } from "./utils/apiStore";
 
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   ageBar: {
-    maxWidth: 500,
+    maxWidth: 400,
     marginLeft: 10,
   },
   lineChart: {
@@ -138,11 +138,9 @@ export default function DashboardMain(props) {
   const [gradStatusFilter, setGradStatusFilter] = useState([]);
   const [countries, setCountries] = useState([]);
   const [studentByYearData, setStudentByYearData] = useState([]);
-  const [faculties, setFaculties] = useState([]);
   const [gendersData, setGendersData] = useState([]);
   const [ageData, setAgeData] = useState([]);
   const [JsonCountries, setJsonCountries] = useState([]);
-  // const [JsonCountries1, setJsonCountries1] = useState([]);
   const [openModal, toggleModal] = useState(false);
   const [currentVisualization, setCurrentVisualization] = useState("age");
   const [totalStudentsfiltered, setTotalStudentsfiltered] = useState(0);
@@ -152,9 +150,8 @@ export default function DashboardMain(props) {
   const [residencyData, setResidencyData] = useState([]);
   const [ptftData, setptftData] = useState([]);
   const [countriesByStudentCount, setCountriesByStudentCount] = useState([]);
-  // const [GeoJsonCountries, setGeoJsonCountries] = useState(defaultGeoJson);
-  // const [GeoJsonCountries1, setGeoJsonCountries1] = useState(defaultGeoJson);
-  // const [MapData, setMapData] = useState([]);
+  const [faculties, setFaculties] = useState([]);
+
   
 
   const visualizations = {
@@ -165,7 +162,7 @@ export default function DashboardMain(props) {
     ),
     mapGraph1: (
       <Card className={classes.map}>
-        <Gmap1 data={data} api={JsonCountries} />
+        <Geomap1 data={data} api={JsonCountries} />
       </Card>
     ),
     genderGraph: (
@@ -238,8 +235,8 @@ export default function DashboardMain(props) {
 
   useEffect(() => {
     fetchCountries(setCountries);
-    fetchFaculties(setFaculties);
     fetchJsonCountries(setJsonCountries);
+    fetchFaculties(setFaculties);
 
   }, []);
 
@@ -383,25 +380,15 @@ export default function DashboardMain(props) {
 
 
       <main className={classes.content}> 
-      {/* <Grid container spacing={3}>
-        <Grid item xs={12} 
-        onClick={() => handleOpen("mapGraph")}
-        >
-          <Paper className={classes.paper}>
-          <Typography variant="h6" align="center" noWrap>
-            Students From Various Country in SMU
-          </Typography>
-            <GeoMap data={data} api={JsonCountries}/>
-          </Paper>
-        </Grid> */}
       <Card className={classes.map} onClick={() => handleOpen("mapGraph")}>
           <GeoMap data={data} api={JsonCountries} />
+          <h3 style={{ marginTop: 0 }}>Students From Various Countries in SMU</h3>
         </Card>
 
-        {/* <Card className={classes.map} onClick={() => handleOpen("mapGraph1")}>
-            <Gmap1 data={data} api={JsonCountries}/>
-            <h3 style={{ marginTop: 0 }}>Students From Various Countries in SMU</h3>
-        </Card> */}
+        <Card className={classes.map} onClick={() => handleOpen("mapGraph1")}>
+            <Geomap1 data={data} api={JsonCountries}/>
+            
+        </Card>
 
 
 
