@@ -12,7 +12,7 @@ from flask_cors import CORS
 import json
 
 app = Flask(__name__)
-app.config['MYSQL_USER'] = 'dataman'
+app.config['MYSQL_USER'] = 'client1'
 app.config['MYSQL_PASSWORD'] = 'preparedDATA20'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_DB'] = 'students'
@@ -118,11 +118,48 @@ def fetch_students_by_Years():
 @app.route('/faculties')
 def fetch_feculties():
     cur = mysql.connection.cursor()
-    select = "SELECT DISTINCT faculty FROM demographic"
+    select = "SELECT DISTINCT faculty FROM demographic where faculty <> 'Faculty of Education'"
     cur.execute(select)
     response = cur.fetchall()
     return jsonify(response)
 
+
+@app.route('/faculty', methods=['POST'])
+def fetch_by_faculty():
+    cur = mysql.connection.cursor()
+    select = "select faculty, count(faculty) count\
+              FROM demographic \
+              WHERE \
+              {0} FIND_IN_SET(gender, %s) \
+	      AND {1} FIND_IN_SET(faculty, %s) \
+              AND {2} FIND_IN_SET(citizenship, %s) \
+              AND {3} FIND_IN_SET(SUBSTR(term,1,4), %s) \
+              AND {4} FIND_IN_SET(level, %s) \
+                  AND faculty <> 'Faculty of Education' \
+                  group by faculty"
+
+    country = request.form.get('country')
+    gender = request.form.get('gender')
+    level = request.form.get('level')
+    year = request.form.get('year')
+    faculty = request.form.get('faculty')
+
+    countries = (request.form.get('country'),)
+    genders = (request.form.get('gender'),)
+    levels = (request.form.get('level'),)
+    years = (request.form.get('year'),)
+    faculties = (request.form.get('faculty'),)
+
+    select = select.format('NOT' if gender == 'any' else '',
+                           'NOT' if faculty == 'any' else '',
+                           'NOT' if country == 'any' else '',
+                           'NOT' if year == 'any' else '',
+                           'NOT' if level == 'any' else '')
+
+    cur.execute(select, (genders, faculties, countries, years, levels))
+    # print(cur._executed)
+    response = cur.fetchall()
+    return jsonify(response)
 
 @app.route('/genders',  methods=['POST'])
 def get_genders():
@@ -158,7 +195,7 @@ def get_genders():
 @app.route('/ages', methods=['POST'])
 def fetch_by_ages():
     cur = mysql.connection.cursor()
-    select = "select COUNT(IF(age BETWEEN 10 AND 20,1,null)) AS age10to20,COUNT(IF(age BETWEEN 20 AND 30,1,null)) AS age20to30,COUNT(IF(age BETWEEN 30 AND 40,1,null)) AS age30to40,COUNT(IF(age BETWEEN 40 AND 50,1,null)) AS age40to50,COUNT(IF(age BETWEEN 50 AND 60,1,null)) AS age50to60 \
+    select = "select COUNT(IF(age BETWEEN 15 AND 20,1,null)) AS age15to20,COUNT(IF(age BETWEEN 20 AND 25,1,null)) AS age20to25,COUNT(IF(age BETWEEN 25 AND 30,1,null)) AS age25to30,COUNT(IF(age BETWEEN 30 AND 35,1,null)) AS age30to35,COUNT(IF(age BETWEEN 35 AND 40,1,null)) AS age35to40,COUNT(IF(age BETWEEN 40 AND 45,1,null)) AS age40to45,COUNT(IF(age BETWEEN 45 AND 50,1,null)) AS age45to50,COUNT(IF(age BETWEEN 50 AND 55,1,null)) AS age50to55,COUNT(IF(age BETWEEN 55 AND 60,1,null)) AS age55to60 \
               FROM demographic \
               WHERE \
               {0} FIND_IN_SET(gender, %s) \
@@ -302,41 +339,10 @@ def fetch_by_pt_ft():
     return jsonify(response)
 
 
-@app.route('/faculty', methods=['POST'])
-def fetch_by_faculty():
-    cur = mysql.connection.cursor()
-    select = "select faculty, count(faculty) count\
-              FROM demographic \
-              WHERE \
-              {0} FIND_IN_SET(gender, %s) \
-	      AND {1} FIND_IN_SET(faculty, %s) \
-              AND {2} FIND_IN_SET(citizenship, %s) \
-              AND {3} FIND_IN_SET(SUBSTR(term,1,4), %s) \
-              AND {4} FIND_IN_SET(level, %s) \
-                  group by faculty"
 
-    country = request.form.get('country')
-    gender = request.form.get('gender')
-    level = request.form.get('level')
-    year = request.form.get('year')
-    faculty = request.form.get('faculty')
 
-    countries = (request.form.get('country'),)
-    genders = (request.form.get('gender'),)
-    levels = (request.form.get('level'),)
-    years = (request.form.get('year'),)
-    faculties = (request.form.get('faculty'),)
 
-    select = select.format('NOT' if gender == 'any' else '',
-                           'NOT' if faculty == 'any' else '',
-                           'NOT' if country == 'any' else '',
-                           'NOT' if year == 'any' else '',
-                           'NOT' if level == 'any' else '')
 
-    cur.execute(select, (genders, faculties, countries, years, levels))
-    # print(cur._executed)
-    response = cur.fetchall()
-    return jsonify(response)
 
 
 @app.route('/totalstudents', methods=['POST'])
