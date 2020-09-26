@@ -14,6 +14,11 @@ const AgeBarGraph = (props) => {
    
 
     useEffect(() => {
+
+        var div = d3.select("body").append("div")	
+      .attr("class", "tooltip4")				
+      .style("opacity", 0)
+      
         ref.current.innerHTML = null;
         // div.style("opacity", 0);
     const svg = d3.select(ref.current)
@@ -56,17 +61,20 @@ const AgeBarGraph = (props) => {
             .style("left", (d3.event.pageX) + "px")		
             .style("top", (d3.event.pageY - 28) + "px");	
         })					
-.on("mouseout", function(d) {		
-        div
+// .on("mouseout", function(d) {		
+//         div
         // .transition()		
         // .duration(500)		
-        .style("opacity", 0);	
-    });  
+    //     .style("opacity", 0);	
+    // });  
+    // div.remove()
+
+    d3.select(window).on('mouseout', () => {
+        d3.selectAll('.tooltip4').style('opacity', '0');
+        });
     
     
-    var div = d3.select("body").append("div")	
-      .attr("class", "tooltip4")				
-      .style("opacity", 0)
+    // div.remove()
       
       
 
