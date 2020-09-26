@@ -1,8 +1,8 @@
 div.tooltip7 {	
     position: absolute;			
     text-align: center;			
-    /* width: 100px;					
-    height: 28px;					 */
+    /* width: 100px;					 */
+    /* height: 28px;					 */
     padding: 2px;				
     font: 12px sans-serif;		
     background:white;	
@@ -12,6 +12,6 @@ div.tooltip7 {
     border-radius: 5px;			
     pointer-events: none;		
   }
-.legend rect {
+/* .legend rect {
     fill:white;
-    stroke:black;}
+    stroke:black;} */

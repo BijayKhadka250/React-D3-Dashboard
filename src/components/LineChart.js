@@ -7,7 +7,7 @@ const LineChart = (props) => {
   const ref = useRef();
  
 
-    var margin = {left:40,right:20,top:50,bottom:50};
+    var margin = {left:40,right:20,top:50,bottom:80};
     var  width = 750-margin.left-margin.right;
     var  height = 350- margin.top - margin.bottom;
       
@@ -63,7 +63,7 @@ const LineChart = (props) => {
   .attr("y", 150)
   .attr("dy", "0.32em")
   .attr("font-weight",600)
-  .text(function(d) { return "Total students in SMU from 2011 to 2019"; });
+  .text(function(d) { return "Students in SMU from 2011 to 2019"; });
 
 
     return(

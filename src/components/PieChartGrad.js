@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import './PieChartGrad.css'
 import { color, path } from "d3";
+import './PieChartGrad.css';
 
     const size = {
        
@@ -10,7 +11,7 @@ import { color, path } from "d3";
       };
 
       const PieChartGrad = props => {
-        // console.log(props.data)
+        // console.log(props.data) 
         const ref = useRef(null);
         const createPie = d3
           .pie()
@@ -20,7 +21,10 @@ import { color, path } from "d3";
           .arc()
           .innerRadius(size.innerRadius)
           .outerRadius(size.outerRadius);
-        const colors = d3.scaleOrdinal(d3.schemeCategory10);
+        // const colors = d3.scaleOrdinal(d3.schemeCategory10);
+        const colors = d3.scaleOrdinal()
+        .domain(["Graduate","Undergraduate"])
+        .range(["#1f77b4", "#ff7f0e"]);
 
         var margin = {top: 50, right: 0, bottom: 50, left: 50};
         var width = 600 - margin.left - margin.right;
@@ -29,7 +33,9 @@ import { color, path } from "d3";
         useEffect(() => {
         ref.current.innerHTML = null;
 
-        
+        var div = d3.select("body").append("div")
+        .attr("class", "tooltip7")				
+        .style("opacity", 0);
 
         
         // const total = props.data.reduce((a, b) => ({ count: a.count + b.count }));
@@ -50,9 +56,7 @@ import { color, path } from "d3";
             .append("g")
             .attr("class", "arc");
 
-            var div = d3.select("body").append("div")
-            .attr("class", "tooltip7")				
-            .style("opacity", 0);
+       
       
           const path = groupWithUpdate
             .append("path")
@@ -62,23 +66,26 @@ import { color, path } from "d3";
               div.transition()		
                   .duration(200)		
                   .style("opacity", .9);		
-              div	.html("hi")	
-                  .style("left", (d3.mouse(this)[0]) + "px")		
-                  .style("top", (d3.mouse(this)[1] - 28) + "px");	
+              div.html(d.data.level+"<br>"+d.data.count)	
+                  .style("left", (d3.event.pageX) + "px")		
+                  .style("top", (d3.event.pageY - 28) + "px");	
               })					
-          .on("mouseout", function(d) {		
-              div
+          // .on("mouseout", function(d) {		
+              // div
               // .transition()		
               //     .duration(500)		
-                  .style("opacity", 0);	
-          });
+                  // .style("opacity", 0);	
+          // });
+          d3.select(window).on('mouseout', () => {
+            d3.selectAll('.tooltip7').style('opacity', '0');
+            });
            
       
           path
             .attr("class", "arc")
             .attr("d", createArc)
-            .attr("fill", (d, i) => colors(i))
-
+            .attr("fill", (d,i) => {console.log(d);return colors(d.data.level)})
+            // d.data.level
           
          
 

@@ -30,15 +30,19 @@ export default class PieChartResidency extends PureComponent {
     };
 
     return (
-      <PieChart width={400} height={400}>
+      <PieChart 
+      margin={{ left: 250, top: 5, bottom: 5, right: 5 }}
+        width = {750}
+        height = {400}
+        >
         <Pie
           dataKey="count"
           startAngle={180}
           endAngle={0}
           data={data}
-          cx={150}
+          cx={130}
           cy={250}
-          outerRadius={100}
+          outerRadius={150}
           fill="#8884d8"
           label
         >

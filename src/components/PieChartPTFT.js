@@ -91,13 +91,15 @@ export default class PieChartPTFT extends PureComponent {
 
   render() {
     let { data } = this.props;
+    console.log(data)
     data = data.length > 0 ? data : [{ pt_ft: "Part/Full Time", count: 100 }];
 
     return (
       <PieChart
-        width={500}
-        height={400}
-        margin={{ left: 50, top: 5, bottom: 5, right: 5 }}
+      
+      width = {750}
+      height = {400}
+      margin={{ left: 200, top: 5, bottom: 5, right: 5 }}
         fill="#FFBB28"
       >
         <Pie
@@ -106,8 +108,8 @@ export default class PieChartPTFT extends PureComponent {
           data={data}
           cx={200}
           cy={200}
-          innerRadius={60}
-          outerRadius={80}
+          innerRadius={130}
+          outerRadius={150}
           fill="#FFBB28"
           dataKey="count"
           onMouseEnter={this.onPieEnter}

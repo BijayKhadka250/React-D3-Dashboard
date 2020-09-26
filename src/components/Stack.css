@@ -12,6 +12,6 @@
     z-index: 100;			
 } */
 
-.x g text{
+.Stack .x g text{
     display: none;
 }

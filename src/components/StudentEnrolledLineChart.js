@@ -10,14 +10,15 @@ import {
 } from "recharts";
 
 const StudentEnrolledLineChart = (props) => {
+  // console.log(props)
   const { data } = props;
   return (
     <LineChart
-      width={600}
-      height={300}
+      width={750}
+      height={400}
       data={data}
       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-      style={{ marginTop: "40px" }}
+      // style={{ marginTop: "40px" }}
     >
       <XAxis dataKey="Enroll_Year" interval="preserveStart" />
       <YAxis dataKey="total" interval="preserveStart" />
