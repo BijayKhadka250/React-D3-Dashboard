@@ -3,3 +3,12 @@
     height: 350px;  
     
     }
+ #grad{
+    background-color: #f0fc03;
+    border-color: #f0fc03 ;
+}
+
+ #undergrad{
+    background-color: #0bfc03;
+    border-color:#0bfc03 ;
+}
